@@ -1,7 +1,12 @@
 package com.healthesystems.catalog.service;
 
+import com.fasterxml.jackson.core.JsonProcessingException;
+import com.fasterxml.jackson.databind.ObjectMapper;
 import com.healthesystems.catalog.model.Catalog;
 import com.healthesystems.catalog.repository.CatalogRepository;
+import org.springframework.beans.factory.ObjectFactory;
+import org.springframework.messaging.MessageChannel;
+import org.springframework.messaging.support.GenericMessage;
 import org.springframework.stereotype.Service;
 import org.springframework.beans.factory.annotation.Autowired;
 
@@ -15,6 +20,13 @@ public class CatalogImpl implements CatalogService {
 
     @Autowired
     CatalogRepository catalogRepository;
+    @Autowired
+    MessageChannel toKafkaItemCreatedTopic;
+    @Autowired
+    ObjectMapper objectMapper;
+    @Autowired
+    ObjectFactory<Catalog> objectFactory;
+
 
     @Override
     public boolean isItemExist(Catalog catalog) {
@@ -30,6 +42,14 @@ public class CatalogImpl implements CatalogService {
 
     @Override
     public Catalog save(Catalog catalog) {
-        return catalogRepository.save(catalog);
+        try {
+        			toKafkaItemCreatedTopic.send(new GenericMessage<>(objectMapper.writeValueAsString(catalog)));
+        		} catch (JsonProcessingException e) {
+
+                  /* Send Message to Error topic
+                    */
+        		}
+        	return catalogRepository.save(catalog);
     }
+
 }
