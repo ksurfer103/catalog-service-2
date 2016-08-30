@@ -1,5 +1,6 @@
 {
-  "itemName": "Crutches",
-  "itemDescription": "Model L106",
-  "itemPrice": "39.50"
+
+  "hcpc" : "8",
+  "sku" : "7",
+  "productName" : "walker"
 }

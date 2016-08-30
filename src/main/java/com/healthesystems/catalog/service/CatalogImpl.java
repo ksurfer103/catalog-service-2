@@ -30,25 +30,40 @@ public class CatalogImpl implements CatalogService {
 
     @Override
     public boolean isItemExist(Catalog catalog) {
-        List<Catalog> found = catalogRepository.findByItemName(catalog.getItemName());
+        List<Catalog> found = catalogRepository.findByProductName(catalog.getProductName());
         return (!found.isEmpty());
 
     }
 
     @Override
-    public List<Catalog> getItem(String itemName) {
-        return  catalogRepository.findByItemName(itemName);
+    public List<Catalog> getProduct(String productName) {
+        return  catalogRepository.findByProductName(productName);
+    }
+
+    @Override
+    public List<Catalog> getProductByHcpc(String hcpc) {
+        return  catalogRepository.findByHcpc(hcpc);
+    }
+
+    @Override
+    public List<Catalog> getProductBySku(String sku) {
+        return  catalogRepository.findBySku(sku);
+    }
+
+    @Override
+    public Catalog getCatalogById(String id) {
+        return catalogRepository.findByProductId(id);
     }
 
     @Override
     public Catalog save(Catalog catalog) {
-        try {
-        			toKafkaItemCreatedTopic.send(new GenericMessage<>(objectMapper.writeValueAsString(catalog)));
-        		} catch (JsonProcessingException e) {
-
-                  /* Send Message to Error topic
-                    */
-        		}
+//        try {
+//        			toKafkaItemCreatedTopic.send(new GenericMessage<>(objectMapper.writeValueAsString(catalog)));
+//        		} catch (JsonProcessingException e) {
+//
+//                  /* Send Message to Error topic
+//                    */
+//        		}
         	return catalogRepository.save(catalog);
     }
 

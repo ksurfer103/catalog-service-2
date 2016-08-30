@@ -10,9 +10,10 @@ import com.healthesystems.catalog.model.Catalog;
 import com.healthesystems.catalog.repository.CatalogRepository;
 
 import java.util.List;
+import java.util.Optional;
 
 @RestController
-@RequestMapping("/item")
+@RequestMapping("/products")
 public class CatalogController {
 
 //    @Autowired
@@ -22,23 +23,53 @@ public class CatalogController {
 
 
 
-    @RequestMapping(value="/{item}", method= RequestMethod.GET)
-    public Catalog getCatalogByItemName(@PathVariable("item") String item){
-       return catalogService.getItem(item).get(0);
+//    @RequestMapping(value="/{productName}", method= RequestMethod.GET)
+//    public Catalog getCatalogByProductName(@PathVariable("productName") String productName){
+//       return catalogService.getProduct(productName).get(0);
+//    }
+
+    @RequestMapping(method= RequestMethod.GET)
+    public Catalog getProductBySku(@RequestParam("sku") Optional <String> sku, @RequestParam("hcpc") Optional <String> hcpc,
+                                   @RequestParam("name") Optional <String> name) {
+
+        if (sku.isPresent()) return catalogService.getProductBySku(sku.get()).get(0);
+        if (hcpc.isPresent()) return catalogService.getProductByHcpc(hcpc.get()).get(0);
+        return catalogService.getProduct(name.get()).get(0);
     }
 
+//    @RequestMapping(method= RequestMethod.GET)
+//    public Catalog getProductByHcpc(@RequestParam("hcpc") String hcpc) {
+//        return catalogService.getProductByHcpc(hcpc).get(0);
+//
+//    }
+
+//    @RequestMapping(method= RequestMethod.GET)
+//    public Catalog getProductName(@RequestParam("name") String name) {
+//        return catalogService.getProduct(name).get(0);
+//
+//    }
+
+//    @RequestMapping(value="/{sku}", method= RequestMethod.GET)
+//    public Catalog getCatalogBySku(@PathVariable("sku") String sku){
+//        return catalogService.getProductBySku(sku).get(0);
+//    }
+//
+//    @RequestMapping(value="/{hcpc}", method= RequestMethod.GET)
+//    public Catalog getCatalogByHcpc(@PathVariable("hcpc") String hcpc){
+//        return catalogService.getProductByHcpc(hcpc).get(0);
+//    }
 
     @RequestMapping( method = RequestMethod.POST)
     public ResponseEntity<Void> createCatalog(@RequestBody Catalog catalog) {
 
-
+        System.out.println("Catalog-" + catalog.getProductName());
         if (catalogService.isItemExist(catalog)) {
-            System.out.println("A catalog with name " + catalog.getItemName() + " already exist");
-            return new ResponseEntity<Void>(HttpStatus.CONFLICT);
+            System.out.println("A catalog with name " + catalog.getProductName() + " already exist");
+            return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
         catalogService.save(catalog);
-        return new ResponseEntity<Void>(HttpStatus.ACCEPTED);
+        return new ResponseEntity<>(HttpStatus.ACCEPTED);
 
     }
 

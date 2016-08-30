@@ -1,9 +1,5 @@
 package com.healthesystems.catalog.model;
 
-/**
- * Created by apurdon on 8/22/16.
- */
-
 
 import org.springframework.data.annotation.Id;
 import org.springframework.data.redis.core.RedisHash;
@@ -16,37 +12,44 @@ import java.math.BigDecimal;
 public class Catalog  {
 
 
-    @Indexed
+
     @Id
-    private String itemName;
+    private String id;
 
-    public String getItemName() {
-        return itemName;
+    @Indexed
+    private String hcpc;
+
+    @Indexed
+    private String sku;
+
+    @Indexed
+    private String productName;
+
+
+    public String getHcpc() {
+        return hcpc;
     }
 
-    public void setItemName(String itemName) {
-        this.itemName = itemName;
+    public void setHcpc(String hcpc) {
+        this.hcpc = hcpc;
     }
 
-    public String getItemDescription() {
-        return itemDescription;
+    public String getSku() {
+        return sku;
     }
 
-    public void setItemDescription(String itemDescription) {
-        this.itemDescription = itemDescription;
+    public void setSku(String sku) {
+        this.sku = sku;
     }
 
-    public BigDecimal getItemPrice() {
-        return itemPrice;
+    public String getProductName() {
+        return productName;
     }
 
-    public void setItemPrice(BigDecimal itemPrice) {
-        this.itemPrice = itemPrice;
+    public void setProductName(String productName) {
+        this.productName = productName;
     }
 
-    private String itemDescription;
-
-    private BigDecimal itemPrice;
 
 
 }
