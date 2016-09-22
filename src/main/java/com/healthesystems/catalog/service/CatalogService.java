@@ -14,8 +14,8 @@ public interface CatalogService {
     List<Catalog> getProduct( String productName);
     List<Catalog> getProductByHcpc( String hcpc);
     List<Catalog> getProductBySku( String sku);
-    Catalog getCatalogById(String id);
 
+    Catalog getCatalogById(String id);
     Catalog save(Catalog catalog);
 
 }

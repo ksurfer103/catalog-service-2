@@ -35,13 +35,16 @@ public class CatalogController {
         if (sku.isPresent()) return catalogService.getProductBySku(sku.get()).get(0);
         if (hcpc.isPresent()) return catalogService.getProductByHcpc(hcpc.get()).get(0);
         return catalogService.getProduct(name.get()).get(0);
+
     }
 
-//    @RequestMapping(method= RequestMethod.GET)
-//    public Catalog getProductByHcpc(@RequestParam("hcpc") String hcpc) {
-//        return catalogService.getProductByHcpc(hcpc).get(0);
-//
-//    }
+
+
+    @RequestMapping(value="scoop",method= RequestMethod.GET)
+    public Catalog getProductByScoop() {
+        return this.getScoop();
+
+    }
 
 //    @RequestMapping(method= RequestMethod.GET)
 //    public Catalog getProductName(@RequestParam("name") String name) {
@@ -72,5 +75,11 @@ public class CatalogController {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
 
     }
-
+    Catalog getScoop() {
+        Catalog cat =  new Catalog();
+        cat.setHcpc("1234");
+        cat.setProductName("item");
+        cat.setSku("9876");
+        return cat;
+    }
 }
