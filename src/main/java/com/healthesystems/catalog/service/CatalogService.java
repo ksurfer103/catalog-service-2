@@ -1,6 +1,6 @@
 package com.healthesystems.catalog.service;
 
-import com.healthesystems.catalog.model.Catalog;
+import com.healthesystems.catalog.model.Product;
 
 import java.util.List;
 
@@ -10,12 +10,12 @@ import java.util.List;
 public interface CatalogService {
 
 
-    boolean isItemExist(Catalog catalog);
-    Catalog getProduct( String productName);
-    List<Catalog> getProductByHcpc( String hcpc);
-    Catalog getProductBySku( String sku);
+    boolean isItemExist(Product product);
+    Product getProduct(String productName);
+    List<Product> getProductByHcpc(String hcpc);
+    Product getProductBySku(String sku);
 
-    Catalog getCatalogById(String id);
-    Catalog save(Catalog catalog);
+    Product getCatalogById(String id);
+    Product save(Product product);
 
 }

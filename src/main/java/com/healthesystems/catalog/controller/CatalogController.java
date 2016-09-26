@@ -1,48 +1,31 @@
 package com.healthesystems.catalog.controller;
+import com.healthesystems.catalog.model.Product;
 import com.healthesystems.catalog.service.CatalogService;
-import com.healthesystems.catalog.service.CatalogServiceImpl;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.beans.factory.annotation.Qualifier;
-import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
 
-import com.healthesystems.catalog.model.Catalog;
-import com.healthesystems.catalog.repository.CatalogRepository;
-
-import javax.annotation.Resource;
-import java.util.List;
 import java.util.Optional;
 
 @RestController
-@RequestMapping("/products")
 public class CatalogController {
 
-//    @Autowired
-//    CatalogRepository catalogRepository;
+    private static final Logger logger = LoggerFactory.getLogger(CatalogController.class);
 
     @Autowired
     CatalogService catalogService;
 
 
-
-//    @RequestMapping(value="/{productName}", method= RequestMethod.GET)
-//    public Catalog getCatalogByProductName(@PathVariable("productName") String productName){
-//       return catalogService.getProduct(productName).get(0);
-//    }
-
     @RequestMapping(path = "/sku", method= RequestMethod.GET)
-    public Catalog getBySku(@RequestParam("sku") String sku){
-        //Catalog catalog = new Catalog();
-        //catalog.setHcpc("jkjkdf");
-
-         //return catalog;
+    public Product getBySku(@RequestParam("sku") String sku){
         return catalogService.getProductBySku(sku);
     }
 
     @RequestMapping(method= RequestMethod.GET)
-    public Catalog getProductBySku(@RequestParam("sku") Optional <String> sku, @RequestParam("hcpc") Optional <String> hcpc,
+    public Product getProductBySku(@RequestParam("sku") Optional <String> sku, @RequestParam("hcpc") Optional <String> hcpc,
                                    @RequestParam("name") Optional <String> name) {
 
         if (sku.isPresent()) return catalogService.getProductBySku(sku.get());
@@ -51,35 +34,16 @@ public class CatalogController {
     }
 
 
-
-
-
-//    @RequestMapping(method= RequestMethod.GET)
-//    public Catalog getProductName(@RequestParam("name") String name) {
-//        return catalogService.getProduct(name).get(0);
-//
-//    }
-
-//    @RequestMapping(value="/{sku}", method= RequestMethod.GET)
-//    public Catalog getCatalogBySku(@PathVariable("sku") String sku){
-//        return catalogService.getProductBySku(sku).get(0);
-//    }
-//
-//    @RequestMapping(value="/{hcpc}", method= RequestMethod.GET)
-//    public Catalog getCatalogByHcpc(@PathVariable("hcpc") String hcpc){
-//        return catalogService.getProductByHcpc(hcpc).get(0);
-//    }
-
     @RequestMapping( method = RequestMethod.POST)
-    public ResponseEntity<Void> createCatalog(@RequestBody Catalog catalog) {
+    public ResponseEntity<Void> createCatalog(@RequestBody Product product) {
 
-        System.out.println("Catalog-" + catalog.getProductName());
-        if (catalogService.isItemExist(catalog)) {
-            System.out.println("A catalog with name " + catalog.getProductName() + " already exist");
+        System.out.println("Product-" + product.getProductName());
+        if (catalogService.isItemExist(product)) {
+            System.out.println("A product with name " + product.getProductName() + " already exist");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
-        catalogService.save(catalog);
+        catalogService.save(product);
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
 
     }

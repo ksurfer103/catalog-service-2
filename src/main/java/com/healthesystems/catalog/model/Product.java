@@ -2,7 +2,6 @@ package com.healthesystems.catalog.model;
 
 
 
-import javax.annotation.Generated;
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -11,7 +10,7 @@ import javax.persistence.Id;
 
 //@RedisHash("products")
 @Entity
-public class Catalog  {
+public class Product {
 
 
     @Id
@@ -20,6 +19,29 @@ public class Catalog  {
 
     //@Indexed
     private String hcpc;
+
+    @Override
+    public boolean equals(Object o) {
+        if (this == o) return true;
+        if (o == null || getClass() != o.getClass()) return false;
+
+        Product product = (Product) o;
+
+        if (productId != null ? !productId.equals(product.productId) : product.productId != null) return false;
+        if (!hcpc.equals(product.hcpc)) return false;
+        if (!sku.equals(product.sku)) return false;
+        return productName.equals(product.productName);
+
+    }
+
+    @Override
+    public int hashCode() {
+        int result = productId != null ? productId.hashCode() : 0;
+        result = 31 * result + hcpc.hashCode();
+        result = 31 * result + sku.hashCode();
+        result = 31 * result + productName.hashCode();
+        return result;
+    }
 
     //@Indexed
     private String sku;
@@ -52,7 +74,7 @@ public class Catalog  {
         this.productName = productName;
     }
 
-    public Catalog(String hcpc, String sku, String name) {
+    public Product(String sku, String hcpc, String name) {
         this.hcpc = hcpc;
         this.productName = name;
         this.sku = sku;

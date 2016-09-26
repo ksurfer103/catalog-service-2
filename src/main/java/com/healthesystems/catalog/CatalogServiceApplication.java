@@ -20,20 +20,20 @@ import java.util.Map;
 @SpringBootApplication
 public class CatalogServiceApplication {
 
-	@Value("${kafka.topic}")
-	private String topic;
+	//@Value("${kafka.topic}")
+	//private String topic;
 
-	@Value("${kafka.broker.address}")
-	private String brokerAddress;
+	//@Value("${kafka.broker.address}")
+	//private String brokerAddress;
 
-	@Value("${kafka.zookeeper.connect}")
-	private String zookeeperConnect;
+	//@Value("${kafka.zookeeper.connect}")
+	//private String zookeeperConnect;
 
 	public static void main(String[] args) {
 		SpringApplication.run(CatalogServiceApplication.class, args);
 	}
 
-	@ServiceActivator(inputChannel = "toKafkaItemCreatedTopic")
+/*	@ServiceActivator(inputChannel = "toKafkaItemCreatedTopic")
 	@Bean
 	public MessageHandler kafkaItemCreatedMessageHandler() throws Exception {
 		KafkaProducerMessageHandler<String, String> handler =
@@ -59,5 +59,5 @@ public class CatalogServiceApplication {
 		props.put(ProducerConfig.KEY_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		props.put(ProducerConfig.VALUE_SERIALIZER_CLASS_CONFIG, StringSerializer.class);
 		return new DefaultKafkaProducerFactory<>(props);
-	}
+	}*/
 }
