@@ -1,6 +1,8 @@
 package com.healthesystems.catalog.controller;
 import com.healthesystems.catalog.service.CatalogService;
+import com.healthesystems.catalog.service.CatalogServiceImpl;
 import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.beans.factory.annotation.Qualifier;
 import org.springframework.http.HttpHeaders;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
@@ -9,6 +11,7 @@ import org.springframework.web.bind.annotation.*;
 import com.healthesystems.catalog.model.Catalog;
 import com.healthesystems.catalog.repository.CatalogRepository;
 
+import javax.annotation.Resource;
 import java.util.List;
 import java.util.Optional;
 
@@ -18,6 +21,7 @@ public class CatalogController {
 
 //    @Autowired
 //    CatalogRepository catalogRepository;
+
     @Autowired
     CatalogService catalogService;
 
@@ -28,23 +32,27 @@ public class CatalogController {
 //       return catalogService.getProduct(productName).get(0);
 //    }
 
+    @RequestMapping(path = "/sku", method= RequestMethod.GET)
+    public Catalog getBySku(@RequestParam("sku") String sku){
+        //Catalog catalog = new Catalog();
+        //catalog.setHcpc("jkjkdf");
+
+         //return catalog;
+        return catalogService.getProductBySku(sku);
+    }
+
     @RequestMapping(method= RequestMethod.GET)
     public Catalog getProductBySku(@RequestParam("sku") Optional <String> sku, @RequestParam("hcpc") Optional <String> hcpc,
                                    @RequestParam("name") Optional <String> name) {
 
-        if (sku.isPresent()) return catalogService.getProductBySku(sku.get()).get(0);
+        if (sku.isPresent()) return catalogService.getProductBySku(sku.get());
         if (hcpc.isPresent()) return catalogService.getProductByHcpc(hcpc.get()).get(0);
-        return catalogService.getProduct(name.get()).get(0);
-
+        return catalogService.getProduct(name.get());
     }
 
 
 
-    @RequestMapping(value="scoop",method= RequestMethod.GET)
-    public Catalog getProductByScoop() {
-        return this.getScoop();
 
-    }
 
 //    @RequestMapping(method= RequestMethod.GET)
 //    public Catalog getProductName(@RequestParam("name") String name) {
@@ -75,11 +83,5 @@ public class CatalogController {
         return new ResponseEntity<>(HttpStatus.ACCEPTED);
 
     }
-    Catalog getScoop() {
-        Catalog cat =  new Catalog();
-        cat.setHcpc("1234");
-        cat.setProductName("item");
-        cat.setSku("9876");
-        return cat;
-    }
+
 }

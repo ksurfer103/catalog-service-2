@@ -10,13 +10,13 @@ import java.util.List;
 public interface CatalogRepository extends
         CrudRepository<Catalog, String> {
 
-     List<Catalog> findByProductName(String productName);
+     Catalog findByProductName(String productName);
 
      List<Catalog> findByHcpc(String hcpc);
 
-     List<Catalog> findBySku(String sku);
+     Catalog findBySku(String sku);
 
-    Catalog findByProductId(String id);
+     Catalog findByProductId(String id);
 }
 
 

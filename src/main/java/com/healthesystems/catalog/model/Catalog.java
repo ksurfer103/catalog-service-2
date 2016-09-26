@@ -1,28 +1,30 @@
 package com.healthesystems.catalog.model;
 
 
-import org.springframework.data.annotation.Id;
-import org.springframework.data.redis.core.RedisHash;
-import org.springframework.data.redis.core.index.Indexed;
 
-import java.math.BigDecimal;
+import javax.annotation.Generated;
+import javax.persistence.Entity;
+import javax.persistence.GeneratedValue;
+import javax.persistence.GenerationType;
+import javax.persistence.Id;
 
 
-@RedisHash("products")
+//@RedisHash("products")
+@Entity
 public class Catalog  {
 
 
-
     @Id
-    private String id;
+    @GeneratedValue(strategy = GenerationType.AUTO)
+    private String productId;
 
-    @Indexed
+    //@Indexed
     private String hcpc;
 
-    @Indexed
+    //@Indexed
     private String sku;
 
-    @Indexed
+    //@Indexed
     private String productName;
 
 
@@ -50,6 +52,10 @@ public class Catalog  {
         this.productName = productName;
     }
 
-
+    public Catalog(String hcpc, String sku, String name) {
+        this.hcpc = hcpc;
+        this.productName = name;
+        this.sku = sku;
+    }
 
 }

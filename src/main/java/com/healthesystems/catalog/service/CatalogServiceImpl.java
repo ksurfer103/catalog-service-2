@@ -16,10 +16,11 @@ import java.util.List;
  * Created by apurdon on 8/22/16.
  */
 @Service
-public class CatalogImpl implements CatalogService {
+public class CatalogServiceImpl implements CatalogService {
 
     @Autowired
     CatalogRepository catalogRepository;
+
     @Autowired
     MessageChannel toKafkaItemCreatedTopic;
     @Autowired
@@ -30,13 +31,13 @@ public class CatalogImpl implements CatalogService {
 
     @Override
     public boolean isItemExist(Catalog catalog) {
-        List<Catalog> found = catalogRepository.findByProductName(catalog.getProductName());
-        return (!found.isEmpty());
+       Catalog found = catalogRepository.findByProductName(catalog.getProductName());
+        return (found != null);
 
     }
 
     @Override
-    public List<Catalog> getProduct(String productName) {
+    public Catalog getProduct(String productName) {
         return  catalogRepository.findByProductName(productName);
     }
 
@@ -46,7 +47,7 @@ public class CatalogImpl implements CatalogService {
     }
 
     @Override
-    public List<Catalog> getProductBySku(String sku) {
+    public Catalog getProductBySku(String sku) {
         return  catalogRepository.findBySku(sku);
     }
 
