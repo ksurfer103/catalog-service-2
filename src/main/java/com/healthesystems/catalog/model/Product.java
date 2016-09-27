@@ -2,6 +2,8 @@ package com.healthesystems.catalog.model;
 
 
 
+import com.fasterxml.jackson.annotation.JsonProperty;
+
 import javax.persistence.Entity;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
@@ -74,10 +76,13 @@ public class Product {
         this.productName = productName;
     }
 
-    public Product(String sku, String hcpc, String name) {
+    public Product(@JsonProperty("sku") String sku, @JsonProperty("hcpc") String hcpc, @JsonProperty("productName") String productName) {
         this.hcpc = hcpc;
-        this.productName = name;
+        this.productName = productName;
         this.sku = sku;
+    }
+    public Product() {
+
     }
 
 }

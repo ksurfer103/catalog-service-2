@@ -22,15 +22,22 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
 
 import java.nio.charset.Charset;
+import java.util.Arrays;
+import java.util.List;
 
 import static org.assertj.core.api.Assertions.assertThat;
+import static org.hamcrest.collection.IsCollectionWithSize.hasSize;
 import static org.junit.Assert.assertEquals;
 import static org.mockito.BDDMockito.given;
+import static org.mockito.Mockito.mock;
+import static org.mockito.Mockito.when;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.post;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.content;
+import static org.hamcrest.Matchers.containsString;
+import static org.hamcrest.Matchers.hasSize;
+import static org.hamcrest.core.Is.is;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
-
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
@@ -54,7 +61,7 @@ public class CatalogServiceApplicationTests {
 
 
     @Test
-	public void testRestEndpoint() throws Exception {
+	public void testRestEndpointSku() throws Exception {
 
         given(this.catalogService.getProductBySku("1234"))
                 .willReturn(new Product("1234", "9876","bigwheels"));
@@ -65,6 +72,49 @@ public class CatalogServiceApplicationTests {
 
         logger.info("results: {}",result.getResponse().getContentAsString());
 	}
+
+    @Test
+    public void testRestEndpointHcpc() throws Exception {
+        List<Product> products = Arrays.asList(
+                new Product("1234", "9876","bigwheels"),
+                new Product("1234", "9876","bigwheels"));
+        when(catalogService.getProductByHcpc("9876")).thenReturn(products);
+
+        mvc.perform(get("/products/hcpc").param("hcpc","9876").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+
+//                .andExpect(jsonPath("$", hasSize(2)))
+//                .andExpect(jsonPath("$[0].sku", is("1234")))
+//               .andExpect(jsonPath("$[0].productName", is("bigwheels")))
+//
+
+
+        logger.info("results: ");
+    }
+
+    @Test
+    public void testRestEndpointProductName() throws Exception {
+        List<Product> products = Arrays.asList(
+                new Product("1234", "9876","bigwheels"),
+                new Product("1234", "9876","bigwheels"));
+        when(catalogService.getProductByHcpc("9876")).thenReturn(products);
+
+        mvc.perform(get("/products/productname").param("productName","bigwheels").accept(MediaType.APPLICATION_JSON_UTF8))
+                .andExpect(status().isOk())
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+
+//                .andExpect(jsonPath("$", hasSize(2)))
+//               .andExpect(jsonPath("$[0].sku", is("1234")))
+//                .andExpect(jsonPath("$[0].productName", is("bigwheels")));
+
+
+
+
+        logger.info("results: productName ");
+    }
+
+
 
     public static final MediaType APPLICATION_JSON_UTF8 = new MediaType(MediaType.APPLICATION_JSON.getType(),
             MediaType.APPLICATION_JSON.getSubtype(), Charset.forName("utf8"));
@@ -81,8 +131,9 @@ public class CatalogServiceApplicationTests {
         logger.info("post {}",requestJson );
        mvc.perform(post(url).contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
-                .andExpect(status().isOk());
+                .andExpect(status().isAccepted());
     }
+
 
 
 }
