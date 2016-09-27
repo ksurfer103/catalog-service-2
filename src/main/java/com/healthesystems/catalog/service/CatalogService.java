@@ -11,11 +11,9 @@ public interface CatalogService {
 
 
     boolean isItemExist(Product product);
-    Product getProduct(String productName);
+    List<Product> getProductByName(String productName);
     List<Product> getProductByHcpc(String hcpc);
     Product getProductBySku(String sku);
-
-    Product getCatalogById(String id);
     Product save(Product product);
 
 }

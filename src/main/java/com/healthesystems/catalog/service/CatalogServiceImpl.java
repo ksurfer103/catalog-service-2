@@ -29,17 +29,18 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
     public boolean isItemExist(Product product) {
-       Product found = catalogRepository.findByProductName(product.getProductName());
+        Product found = catalogRepository.findBySku(product.getSku());
         return (found != null);
 
     }
 
     @Override
-    public Product getProduct(String productName) {
-        return  catalogRepository.findByProductName(productName);
+    public List<Product> getProductByName(String productName) {
+        return  catalogRepository.findByProductNameLike(productName);
     }
 
     @Override
+
     public List<Product> getProductByHcpc(String hcpc) {
         return  catalogRepository.findByHcpc(hcpc);
     }
@@ -48,12 +49,6 @@ public class CatalogServiceImpl implements CatalogService {
     public Product getProductBySku(String sku) {
         return  catalogRepository.findBySku(sku);
     }
-
-    @Override
-    public Product getCatalogById(String id) {
-        return catalogRepository.findByProductId(id);
-    }
-
 
 
     @Override
@@ -65,6 +60,7 @@ public class CatalogServiceImpl implements CatalogService {
 //                  /* Send Message to Error topic
 //                    */
 //        		}
+
         	return catalogRepository.save(product);
     }
 

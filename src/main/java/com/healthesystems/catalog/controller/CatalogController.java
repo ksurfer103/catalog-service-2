@@ -7,8 +7,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
-
-import java.util.Optional;
+import java.util.List;
 
 @RestController
 public class CatalogController {
@@ -18,28 +17,31 @@ public class CatalogController {
     @Autowired
     CatalogService catalogService;
 
-
+//TODO: refactor to meaningful name
     @RequestMapping(path = "/sku", method= RequestMethod.GET)
     public Product getBySku(@RequestParam("sku") String sku){
+        logger.info("get product by sku: {}",sku);
         return catalogService.getProductBySku(sku);
     }
-
-    @RequestMapping(method= RequestMethod.GET)
-    public Product getProductBySku(@RequestParam("sku") Optional <String> sku, @RequestParam("hcpc") Optional <String> hcpc,
-                                   @RequestParam("name") Optional <String> name) {
-
-        if (sku.isPresent()) return catalogService.getProductBySku(sku.get());
-        if (hcpc.isPresent()) return catalogService.getProductByHcpc(hcpc.get()).get(0);
-        return catalogService.getProduct(name.get());
+//TODO: create a new method for getting product by name
+    @RequestMapping(path="/productname",method= RequestMethod.GET)
+    public List<Product> getProductByProductName(@RequestParam("productName") String productName) {
+        logger.info("get product by name: {}",productName);
+        return catalogService.getProductByName(productName);
     }
 
+    @RequestMapping(path="/hcpc",method= RequestMethod.GET)
+    public List<Product> getProductByHcpc(@RequestParam("hcpc") String hcpc) {
+        logger.info("get product by HCPC: {}", hcpc);
+        return catalogService.getProductByHcpc(hcpc);
+    }
 
+    //TODO: create a new method for getting product by HCPC
     @RequestMapping( method = RequestMethod.POST)
-    public ResponseEntity<Void> createCatalog(@RequestBody Product product) {
+    public ResponseEntity<Void> createProduct(@RequestBody Product product) {
 
-        System.out.println("Product-" + product.getProductName());
         if (catalogService.isItemExist(product)) {
-            System.out.println("A product with name " + product.getProductName() + " already exist");
+            logger.info("A product with name " + product.getProductName() + " already exists");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
         }
 
