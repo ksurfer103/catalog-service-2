@@ -18,19 +18,19 @@ public class CatalogController {
     CatalogService catalogService;
 
 //TODO: refactor to meaningful name
-    @RequestMapping(path = "/sku", method= RequestMethod.GET)
+    @RequestMapping(path = "/products/sku", method= RequestMethod.GET)
     public Product getBySku(@RequestParam("sku") String sku){
         logger.info("get product by sku: {}",sku);
         return catalogService.getProductBySku(sku);
     }
 //TODO: create a new method for getting product by name
-    @RequestMapping(path="/productname",method= RequestMethod.GET)
+    @RequestMapping(path="/products/productname",method= RequestMethod.GET)
     public List<Product> getProductByProductName(@RequestParam("productName") String productName) {
         logger.info("get product by name: {}",productName);
         return catalogService.getProductByName(productName);
     }
 
-    @RequestMapping(path="/hcpc",method= RequestMethod.GET)
+    @RequestMapping(path="/products/hcpc",method= RequestMethod.GET)
     public List<Product> getProductByHcpc(@RequestParam("hcpc") String hcpc) {
         logger.info("get product by HCPC: {}", hcpc);
         return catalogService.getProductByHcpc(hcpc);
