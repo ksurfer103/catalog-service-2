@@ -42,14 +42,11 @@ public class ServiceTests {
     @Before
     public void init() {
         Product one = new Product("1234", "9876","special wheelchair");
-       Product two = new Product("1235", "9876","special wheelchair");
+        Product two = new Product("1235", "9876","special wheelchair");
         Product three = new Product("1236", "9876","Super special wheelchair");
 
 
-        catalogRepository.save(one);
-        catalogRepository.save(two);
-        catalogRepository.save(three);
-
+        catalogRepository.save(Arrays.asList(one, two, three));
 
     }
 
@@ -57,16 +54,33 @@ public class ServiceTests {
     public void testServiceForData() {
         List<Product> products = this.catalogRepository.findByProductNameLike("special wheelchair");
         assertThat(products.size()).isEqualTo(2);
-        //assertThat(products.get(0).getSku()).isEqualTo("1234");
+
+//        for (Product item: products) {
+//            System.out.println(" This is the sku " + item.getSku());
+//        }
+
+        assertThat(products.get(0).getSku()).isEqualTo("1234");
+
+        // find the Super
+        List<Product> prods = this.catalogRepository.findByProductNameLike("Super special wheelchair");
+        assertThat(prods.size()).isEqualTo(1);
+        assertThat(prods.get(0).getSku()).isEqualTo("1236");
 
 
     }
 
     @Test
     public void testServiceBySku() {
-
         Product p = catalogService.getProductBySku("1234");
         assertThat(p.getProductName()).isEqualTo("special wheelchair");
     }
+
+    @Test
+    public void testServiceByProductName() {
+        List <Product> p = catalogService.getProductByName("special wheelchair");
+        assertThat(p.size()).isEqualTo(2);
+    }
+
+
 
 }
