@@ -39,7 +39,7 @@ import com.healthesystems.catalog.service.CatalogService;
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
-public class CatalogServiceApplicationTests {
+public class ControllerTests {
 
 
 
@@ -53,7 +53,7 @@ public class CatalogServiceApplicationTests {
     @MockBean
     private CatalogService catalogService;
 
-    private static final Logger logger = LoggerFactory.getLogger(CatalogServiceApplicationTests.class);
+    private static final Logger logger = LoggerFactory.getLogger(ControllerTests.class);
 
 
     @Test
