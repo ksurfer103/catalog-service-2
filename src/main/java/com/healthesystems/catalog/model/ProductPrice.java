@@ -22,7 +22,7 @@ public class ProductPrice {
     @Column(name="product_price_id")
 	private Integer id;
     private BigDecimal price;
-    @Column(name="product_price_type")
+ 	@Column(name="product_price_type")
     @Enumerated(EnumType.STRING)
 	private ProductPriceType priceType;
 	private Date effectiveDate;
@@ -31,6 +31,20 @@ public class ProductPrice {
 	@JoinColumn(name="product_id")
 	private Product product;
 	
+	
+	public ProductPrice(Integer id, BigDecimal price, ProductPriceType priceType, Date effectiveDate,
+			String priceLocale) {
+		super();
+		this.id = id;
+		this.price = price;
+		this.priceType = priceType;
+		this.effectiveDate = effectiveDate;
+		this.priceLocale = priceLocale;
+	}
+	
+	public ProductPrice() {
+		super();
+	}
 	public Integer getId() {
 		return id;
 	}

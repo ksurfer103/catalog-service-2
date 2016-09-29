@@ -1,6 +1,8 @@
 package com.healthesystems.catalog;
 
 import com.healthesystems.catalog.model.Product;
+import com.healthesystems.catalog.model.ProductPrice;
+import com.healthesystems.catalog.model.ProductPriceType;
 import com.healthesystems.catalog.repository.CatalogRepository;
 import com.healthesystems.catalog.service.CatalogService;
 import com.healthesystems.catalog.service.CatalogServiceImpl;
@@ -20,8 +22,13 @@ import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
+import java.math.BigDecimal;
+import java.util.ArrayList;
 import java.util.Arrays;
+import java.util.Date;
+import java.util.HashSet;
 import java.util.List;
+import java.util.Set;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
@@ -76,6 +83,21 @@ public class ServiceTests {
     public void testServiceByProductName() {
         List <Product> p = catalogService.getProductByName("special wheelchair");
         assertThat(p.size()).isEqualTo(2);
+    }
+    
+    @Test
+    public void testCreateNewProduct(){
+    	
+    	Set<ProductPrice> prices = new HashSet<ProductPrice>();
+    	prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),ProductPriceType.Vendor,new Date(),"Progressive"));
+    	prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),ProductPriceType.StateOfVenue,new Date(),"CA"));
+    	Product newProduct = new Product("123456789","123456789","Super-duber special wheelchair", prices);
+    	
+    	catalogService.save(newProduct);
+    	Product savedProduct = catalogService.getProductBySku(newProduct.getSku());
+    	
+    	assertThat(savedProduct.getProductName()).isEqualTo("Super-duber special wheelchair");
+    	
     }
 
     //todo: add save test.

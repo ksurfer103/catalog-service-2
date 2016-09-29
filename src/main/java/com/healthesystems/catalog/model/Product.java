@@ -7,8 +7,10 @@ import com.fasterxml.jackson.annotation.JsonProperty;
 import java.util.HashSet;
 import java.util.Set;
 
+import javax.persistence.CascadeType;
 import javax.persistence.Column;
 import javax.persistence.Entity;
+import javax.persistence.FetchType;
 import javax.persistence.GeneratedValue;
 import javax.persistence.GenerationType;
 import javax.persistence.Id;
@@ -29,7 +31,7 @@ public class Product {
     private String sku;
     private String productName;
     
-    @OneToMany
+    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name="product_id")
     private Set<ProductPrice> productPrices = new HashSet<ProductPrice>();
 
@@ -37,7 +39,7 @@ public class Product {
         this.hcpc = hcpc;
         this.productName = productName;
         this.sku = sku;
-        this.productPrices = productPrices;
+        setProductPrices(productPrices);
     }
     
     public Product() { }
@@ -73,7 +75,14 @@ public class Product {
 	}
 
 	public void setProductPrices(Set<ProductPrice> productPrices) {
-		this.productPrices = productPrices;
+	    for (ProductPrice productPrice : productPrices) {
+	    	this.addProductPrice(productPrice);
+		}
+	}
+	
+	public void addProductPrice(ProductPrice productPrice){
+		this.productPrices.add(productPrice);
+		productPrice.setProduct(this);
 	}
 
 	@Override
