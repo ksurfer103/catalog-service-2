@@ -25,6 +25,7 @@ import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.boot.test.mock.mockito.MockBean;
 import org.springframework.context.ApplicationContext;
 import org.springframework.http.MediaType;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.MvcResult;
@@ -33,12 +34,14 @@ import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import com.healthesystems.catalog.model.Product;
+import com.healthesystems.catalog.model.ProductPrice;
 import com.healthesystems.catalog.service.CatalogService;
 
 @RunWith(SpringRunner.class)	
 @SpringBootTest
 @AutoConfigureMockMvc
 @AutoConfigureTestDatabase
+@ActiveProfiles("local")
 public class ControllerTests {
 
 
@@ -59,8 +62,9 @@ public class ControllerTests {
     @Test
 	public void testRestEndpointSku() throws Exception {
 
+    	
         given(this.catalogService.getProductBySku("1234"))
-                .willReturn(new Product("1234", "9876","bigwheels"));
+                .willReturn(new Product("1234", "9876","bigwheels", null));
 
         MvcResult result = this.mvc.perform(get("/products/sku").param("sku","1234").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().json("{\"hcpc\":\"9876\",\"sku\":\"1234\",\"productName\":\"bigwheels\"}"))
@@ -68,45 +72,41 @@ public class ControllerTests {
 
         logger.info("results: {}",result.getResponse().getContentAsString());
 	}
-
+    
+  
     @Test
     public void testRestEndpointHcpc() throws Exception {
         List<Product> products = Arrays.asList(
-                new Product("1234", "9876","bigwheels"),
-                new Product("1234", "9876","bigwheels"));
+                new Product("1234", "9876","bigwheels",null),
+                new Product("1234", "9876","bigwheels",null));
         when(catalogService.getProductByHcpc("9876")).thenReturn(products);
 
-        mvc.perform(get("/products/hcpc").param("hcpc","9876").accept(MediaType.APPLICATION_JSON_UTF8))
+        MvcResult result = mvc.perform(get("/products/hcpc").param("hcpc","9876").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].sku", is("1234")))
-               .andExpect(jsonPath("$[0].productName", is("bigwheels")));
-//
+               .andExpect(jsonPath("$[0].productName", is("bigwheels")))
+               .andReturn();
 
-
-        logger.info("results: ");
+        logger.info("results: {}", result.getResponse().getContentAsString());
     }
 
     @Test
     public void testRestEndpointProductName() throws Exception {
         List<Product> products = Arrays.asList(
-                new Product("1234", "9876","bigwheels"),
-                new Product("1234", "9876","bigwheels"));
-        when(catalogService.getProductByHcpc("9876")).thenReturn(products);
+                new Product("1234", "9876","bigwheels",null),
+                new Product("1234", "9876","bigwheels",null));
+        when(catalogService.getProductByName("bigwheels")).thenReturn(products);
 
-        mvc.perform(get("/products/productname").param("productName","bigwheels").accept(MediaType.APPLICATION_JSON_UTF8))
+        MvcResult result = mvc.perform(get("/products/productname").param("productName","bigwheels").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
-                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE));
+                .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
+                .andExpect(jsonPath("$", hasSize(2)))
+                .andExpect(jsonPath("$[0].sku", is("1234")))
+                .andExpect(jsonPath("$[0].productName", is("bigwheels"))).andReturn();
 
-//                .andExpect(jsonPath("$", hasSize(2)))
-//               .andExpect(jsonPath("$[0].sku", is("1234")))
-//                .andExpect(jsonPath("$[0].productName", is("bigwheels")));
-
-
-
-
-        logger.info("results: productName ");
+        logger.info("results: {} ", result.getResponse().getContentAsString());
     }
 
 
@@ -117,17 +117,18 @@ public class ControllerTests {
     @Test
     public void testInsertProduct() throws Exception {
         String url = "products" ;
-        Product anObject = new Product("testSku","testHcpc","testProduct");
+        Product anObject = new Product("testSku","testHcpc","testProduct",null);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
         ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
         String requestJson=ow.writeValueAsString(anObject );
         logger.info("post {}",requestJson );
-       mvc.perform(post(url).contentType(APPLICATION_JSON_UTF8)
+        mvc.perform(post(url).contentType(APPLICATION_JSON_UTF8)
                 .content(requestJson))
                 .andExpect(status().isAccepted());
-    }
+        
+     }
 
 
 

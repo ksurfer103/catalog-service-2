@@ -4,15 +4,20 @@ import com.healthesystems.catalog.model.Product;
 import com.healthesystems.catalog.repository.CatalogRepository;
 import com.healthesystems.catalog.service.CatalogService;
 import com.healthesystems.catalog.service.CatalogServiceImpl;
+
+import org.junit.Assert;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.mockito.Mock;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
 import org.springframework.context.annotation.ComponentScan;
+import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.util.Arrays;
@@ -26,10 +31,14 @@ import static org.assertj.core.api.Java6Assertions.assertThat;
 
 @RunWith(SpringRunner.class)
 @SpringBootTest
+@ActiveProfiles("local")
 public class ServiceTests {
 
-//    @Mock
-//    private CatalogService catalogService;
+	/*
+	 * using data supplied in the data.sql file
+	 */
+
+    private static final Logger logger = LoggerFactory.getLogger(ServiceTests.class);
 
     @Autowired
     private CatalogService catalogService;
@@ -38,40 +47,28 @@ public class ServiceTests {
     private CatalogRepository catalogRepository ;
 
 
-
-    @Before
-    public void init() {
-        Product one = new Product("1234", "9876","special wheelchair");
-        Product two = new Product("1235", "9876","special wheelchair");
-        Product three = new Product("1236", "9876","Super special wheelchair");
-
-
-        catalogRepository.save(Arrays.asList(one, two, three));
-
+    @Test
+    public void testServiceLocal(){
+    	Product product = catalogService.getProductBySku("5");
+    	logger.info("Product: {}", product.toString());
+    	Assert.assertEquals("WSD", product.getHcpc());
+    	
     }
-
     @Test
     public void testServiceForData() {
         List<Product> products = this.catalogRepository.findByProductNameLike("special wheelchair");
         assertThat(products.size()).isEqualTo(2);
-
-//        for (Product item: products) {
-//            System.out.println(" This is the sku " + item.getSku());
-//        }
-
         assertThat(products.get(0).getSku()).isEqualTo("1234");
 
-        // find the Super
         List<Product> prods = this.catalogRepository.findByProductNameLike("Super special wheelchair");
         assertThat(prods.size()).isEqualTo(1);
         assertThat(prods.get(0).getSku()).isEqualTo("1236");
-
-
     }
 
     @Test
     public void testServiceBySku() {
         Product p = catalogService.getProductBySku("1234");
+        logger.info("Product: {}", p.toString());
         assertThat(p.getProductName()).isEqualTo("special wheelchair");
     }
 
@@ -81,6 +78,7 @@ public class ServiceTests {
         assertThat(p.size()).isEqualTo(2);
     }
 
+    //todo: add save test.
 
 
 }

@@ -17,13 +17,12 @@ public class CatalogController {
     @Autowired
     CatalogService catalogService;
 
-//TODO: refactor to meaningful name
+
     @RequestMapping(path = "/products/sku", method= RequestMethod.GET)
     public Product getBySku(@RequestParam("sku") String sku){
         logger.info("get product by sku: {}",sku);
         return catalogService.getProductBySku(sku);
     }
-//TODO: create a new method for getting product by name
     @RequestMapping(path="/products/productname",method= RequestMethod.GET)
     public List<Product> getProductByProductName(@RequestParam("productName") String productName) {
         logger.info("get product by name: {}",productName);
@@ -36,10 +35,8 @@ public class CatalogController {
         return catalogService.getProductByHcpc(hcpc);
     }
 
-    //TODO: create a new method for getting product by HCPC
     @RequestMapping( method = RequestMethod.POST)
     public ResponseEntity<Void> createProduct(@RequestBody Product product) {
-
         if (catalogService.isItemExist(product)) {
             logger.info("A product with name " + product.getProductName() + " already exists");
             return new ResponseEntity<>(HttpStatus.CONFLICT);
