@@ -10,10 +10,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
 import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.status;
 
+import java.math.BigDecimal;
 import java.nio.charset.Charset;
-import java.util.Arrays;
-import java.util.List;
+import java.util.*;
 
+import com.healthesystems.catalog.model.ProductPriceType;
+import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
@@ -58,13 +60,26 @@ public class ControllerTests {
 
     private static final Logger logger = LoggerFactory.getLogger(ControllerTests.class);
 
+    Set<ProductPrice> prices = new HashSet<>();
+
+    @Before
+    public void initSet() {
+        // create productprice
+        // set
+
+        Set<ProductPrice> prices = new HashSet<ProductPrice>();
+        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),ProductPriceType.Vendor,new Date(),"Progressive"));
+        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),ProductPriceType.StateOfVenue,new Date(),"CA"));
+    }
+
 
     @Test
 	public void testRestEndpointSku() throws Exception {
 
-    	
+
         given(this.catalogService.getProductBySku("1234"))
-                .willReturn(new Product("1234", "9876","bigwheels", null));
+                .willReturn(new Product("1234", "9876","bigwheels", prices));
+
 
         MvcResult result = this.mvc.perform(get("/products/sku").param("sku","1234").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk()).andExpect(content().json("{\"hcpc\":\"9876\",\"sku\":\"1234\",\"productName\":\"bigwheels\"}"))
