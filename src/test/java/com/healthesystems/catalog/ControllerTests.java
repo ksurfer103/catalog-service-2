@@ -60,14 +60,10 @@ public class ControllerTests {
 
     private static final Logger logger = LoggerFactory.getLogger(ControllerTests.class);
 
-    Set<ProductPrice> prices = new HashSet<>();
+    Set<ProductPrice> prices =  new HashSet<ProductPrice>();
 
     @Before
     public void initSet() {
-        // create productprice
-        // set
-
-        Set<ProductPrice> prices = new HashSet<ProductPrice>();
         prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),ProductPriceType.Vendor,new Date(),"Progressive"));
         prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),ProductPriceType.StateOfVenue,new Date(),"CA"));
     }
@@ -92,8 +88,8 @@ public class ControllerTests {
     @Test
     public void testRestEndpointHcpc() throws Exception {
         List<Product> products = Arrays.asList(
-                new Product("1234", "9876","bigwheels",null),
-                new Product("1234", "9876","bigwheels",null));
+                new Product("1234", "9876","bigwheels",prices),
+                new Product("1234", "9876","bigwheels",prices));
         when(catalogService.getProductByHcpc("9876")).thenReturn(products);
 
         MvcResult result = mvc.perform(get("/products/hcpc").param("hcpc","9876").accept(MediaType.APPLICATION_JSON_UTF8))
@@ -110,8 +106,8 @@ public class ControllerTests {
     @Test
     public void testRestEndpointProductName() throws Exception {
         List<Product> products = Arrays.asList(
-                new Product("1234", "9876","bigwheels",null),
-                new Product("1234", "9876","bigwheels",null));
+                new Product("1234", "9876","bigwheels",prices),
+                new Product("1234", "9876","bigwheels",prices));
         when(catalogService.getProductByName("bigwheels")).thenReturn(products);
 
         MvcResult result = mvc.perform(get("/products/productname").param("productName","bigwheels").accept(MediaType.APPLICATION_JSON_UTF8))
@@ -132,7 +128,7 @@ public class ControllerTests {
     @Test
     public void testInsertProduct() throws Exception {
         String url = "products" ;
-        Product anObject = new Product("testSku","testHcpc","testProduct",null);
+        Product anObject = new Product("testSku","testHcpc","testProduct",prices);
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);

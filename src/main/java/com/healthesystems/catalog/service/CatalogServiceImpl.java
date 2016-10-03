@@ -1,13 +1,12 @@
 package com.healthesystems.catalog.service;
 
-import com.fasterxml.jackson.databind.ObjectMapper;
+import java.util.List;
+
+import org.springframework.beans.factory.annotation.Autowired;
+import org.springframework.stereotype.Service;
+
 import com.healthesystems.catalog.model.Product;
 import com.healthesystems.catalog.repository.CatalogRepository;
-import org.springframework.beans.factory.ObjectFactory;
-import org.springframework.stereotype.Service;
-import org.springframework.beans.factory.annotation.Autowired;
-
-import java.util.List;
 
 /**
  * Created by apurdon on 8/22/16.
@@ -20,13 +19,7 @@ public class CatalogServiceImpl implements CatalogService {
 
    // @Autowired
     //MessageChannel toKafkaItemCreatedTopic;
-    @Autowired
-    ObjectMapper objectMapper;
-
-    @Autowired
-    ObjectFactory<Product> objectFactory;
-
-
+ 
     @Override
     public boolean isItemExist(Product product) {
         Product found = catalogRepository.findBySku(product.getSku());

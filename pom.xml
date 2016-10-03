@@ -72,7 +72,6 @@
         <dependency>
             <groupId>com.jayway.jsonpath</groupId>
             <artifactId>json-path-assert</artifactId>
-            <version>2.2.0</version>
             <scope>test</scope>
             <exclusions>
                 <exclusion>
@@ -95,7 +94,13 @@
             <groupId>org.springframework.boot</groupId>
             <artifactId>spring-boot-starter-data-jpa</artifactId>
         </dependency>
-    </dependencies>
+        <dependency>
+        	<groupId>org.springframework.boot</groupId>
+        	<artifactId>
+        		spring-boot-starter-cloud-connectors
+        	</artifactId>
+        </dependency>
+	</dependencies>
 
 	<dependencyManagement>
 		<dependencies>

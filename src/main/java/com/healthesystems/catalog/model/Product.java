@@ -2,7 +2,11 @@ package com.healthesystems.catalog.model;
 
 
 
+import com.fasterxml.jackson.annotation.JsonAutoDetect;
+import com.fasterxml.jackson.annotation.JsonIdentityInfo;
+import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
+import com.fasterxml.jackson.annotation.ObjectIdGenerators;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -18,7 +22,6 @@ import javax.persistence.JoinColumn;
 import javax.persistence.OneToMany;
 
 
-//@RedisHash("products")
 @Entity
 public class Product {
 
@@ -33,9 +36,10 @@ public class Product {
     
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name="product_id")
+	@JsonIgnoreProperties("product")
     private Set<ProductPrice> productPrices = new HashSet<ProductPrice>();
 
-    public Product(@JsonProperty("sku") String sku, @JsonProperty("hcpc") String hcpc, @JsonProperty("productName") String productName, Set<ProductPrice> productPrices) {
+    public Product(String sku,String hcpc,String productName,Set<ProductPrice> productPrices) {
         this.hcpc = hcpc;
         this.productName = productName;
         this.sku = sku;
@@ -76,7 +80,7 @@ public class Product {
 
 	public void setProductPrices(Set<ProductPrice> productPrices) {
 	    for (ProductPrice productPrice : productPrices) {
-	    	this.addProductPrice(productPrice);
+	    	addProductPrice(productPrice);
 		}
 	}
 	
