@@ -27,17 +27,16 @@ public class Product {
 
 
     @Id
-    @GeneratedValue(strategy = GenerationType.AUTO)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     @Column(name="product_id")
     private Integer id;
     private String hcpc;
     private String sku;
     private String productName;
-    
-    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
-    @JoinColumn(name="product_id")
-	@JsonIgnoreProperties("product")
-    private Set<ProductPrice> productPrices = new HashSet<ProductPrice>();
+
+    //TODO: add Unit of Measure (look at existing system)
+
+    //TODO: ADD CATEGORY, What is the category used for.
 
     public Product(String sku,String hcpc,String productName,Set<ProductPrice> productPrices) {
         this.hcpc = hcpc;
@@ -45,7 +44,15 @@ public class Product {
         this.sku = sku;
         setProductPrices(productPrices);
     }
-    
+
+
+    private String catalogReferenceKey;
+
+    @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
+    @JoinColumn(name="product_id")
+    @JsonIgnoreProperties("product")
+    private Set<ProductPrice> productPrices = new HashSet<ProductPrice>();
+
     public Product() { }
 
 
@@ -101,6 +108,10 @@ public class Product {
         if (!sku.equals(product.sku)) return false;
         return productName.equals(product.productName);
 
+    }
+
+    public String getCatalogReferenceKey() {
+        return hcpc + "-" + sku;
     }
 
     @Override
