@@ -13,6 +13,8 @@ import javax.persistence.GenerationType;
 import javax.persistence.Id;
 import javax.persistence.JoinColumn;
 import javax.persistence.ManyToOne;
+import javax.validation.constraints.Min;
+import javax.validation.constraints.NotNull;
 
 @Entity
 public class ProductPrice {
@@ -22,11 +24,18 @@ public class ProductPrice {
     @GeneratedValue(strategy = GenerationType.AUTO)
     @Column(name="product_price_id")
 	private Integer id;
-    private BigDecimal price;
+    @NotNull
+	@Min(0.00)
+	private BigDecimal price;
  	@Column(name="product_price_type")
     @Enumerated(EnumType.STRING)
+	@NotNull
 	private ProductPriceType priceType;
+	@NotNull
 	private Date effectiveDate;
+	@NotNull
+	@Enumerated(EnumType.STRING)
+	@Column(name="price_locale")
 	private String priceLocale;
 	@ManyToOne(fetch = FetchType.LAZY)
 	@JoinColumn(name="product_id")
