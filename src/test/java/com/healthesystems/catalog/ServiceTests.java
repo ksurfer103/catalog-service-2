@@ -1,5 +1,6 @@
 package com.healthesystems.catalog;
 
+import com.healthesystems.catalog.model.PriceLocale;
 import com.healthesystems.catalog.model.Product;
 import com.healthesystems.catalog.model.ProductPrice;
 import com.healthesystems.catalog.model.ProductPriceType;
@@ -57,7 +58,7 @@ public class ServiceTests {
     @Test
     public void testServiceLocal(){
     	Product product = catalogService.getProductBySku("5");
-    	logger.info("Product: {}", product.toString());
+    	logger.info("Product:   {}", product.toString());
     	Assert.assertEquals("WSD", product.getHcpc());
     	
     }
@@ -84,18 +85,18 @@ public class ServiceTests {
         List <Product> p = catalogService.getProductByName("special wheelchair");
         assertThat(p.size()).isEqualTo(2);
     }
-    
+
     @Test
     public void testCreateNewProduct(){
     	
     	Set<ProductPrice> prices = new HashSet<ProductPrice>();
-    	prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),ProductPriceType.Vendor,new Date(),"Progressive"));
-    	prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),ProductPriceType.StateOfVenue,new Date(),"CA"));
+    	prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date(), PriceLocale.XX,"ACME","LIBERTY"));
+    	prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date(), PriceLocale.XX,"ACME","LIBERTY"));
     	Product newProduct = new Product("123456789","123456789","Super-duber special wheelchair", prices);
     	
     	catalogService.save(newProduct);
     	Product savedProduct = catalogService.getProductBySku(newProduct.getSku());
-    	
+    	logger.info("Saved Product {} and prices {}",savedProduct, savedProduct.getProductPrices());
     	assertThat(savedProduct.getProductName()).isEqualTo("Super-duber special wheelchair");
     	
     }

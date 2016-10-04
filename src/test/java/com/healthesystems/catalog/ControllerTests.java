@@ -14,6 +14,7 @@ import java.math.BigDecimal;
 import java.nio.charset.Charset;
 import java.util.*;
 
+import com.healthesystems.catalog.model.PriceLocale;
 import com.healthesystems.catalog.model.ProductPriceType;
 import org.junit.Before;
 import org.junit.Test;
@@ -64,8 +65,8 @@ public class ControllerTests {
 
     @Before
     public void initSet() {
-        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),ProductPriceType.Vendor,new Date(),"Progressive"));
-        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),ProductPriceType.StateOfVenue,new Date(),"CA"));
+        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date(), PriceLocale.XX,"ACME","LIBERTY"));
+        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date(), PriceLocale.XX,"ACME","LIBERTY"));
     }
 
 
