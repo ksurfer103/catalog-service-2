@@ -73,7 +73,6 @@ public class ControllerTests {
     @Test
 	public void testRestEndpointSku() throws Exception {
 
-
         given(this.catalogService.getProductBySku("1234"))
                 .willReturn(new Product("1234", "9876","bigwheels", prices));
 

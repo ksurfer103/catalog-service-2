@@ -1,5 +1,7 @@
 package com.healthesystems.catalog.model;
 
+import org.springframework.util.Assert;
+
 import java.math.BigDecimal;
 import java.util.Date;
 
@@ -20,7 +22,7 @@ import javax.validation.constraints.NotNull;
 public class ProductPrice {
 
 
-    private static final long MIN_PRODUCT_PRICE = 0;
+    private static final long MIN_PRODUCT_PRICE = 1;
 
 
     @Id
@@ -32,7 +34,6 @@ public class ProductPrice {
     @Enumerated(EnumType.STRING)
 	@Column(name="price_locale")
 	private PriceLocale priceLocale;
-
 
     @Min(MIN_PRODUCT_PRICE)
     private BigDecimal price;
@@ -55,6 +56,8 @@ public class ProductPrice {
 			PriceLocale priceLocale, String vendor, String customer) {
 		super();
 		this.id = id;
+		Assert.notNull(price, "Price can not be null");
+		Assert.isTrue(price.doubleValue() > 0.00, "Price must be greater than $0");
 		this.price = price;
 		this.vendor = vendor;
         this.customer = customer;
@@ -82,6 +85,9 @@ public class ProductPrice {
 		return price;
 	}
 	public void setPrice(BigDecimal price) {
+		Assert.notNull(price, "Price can not be null");
+		Assert.isTrue(price.doubleValue() > 0.00, "Price must be greater than $0");
+
 		this.price = price;
 	}
 

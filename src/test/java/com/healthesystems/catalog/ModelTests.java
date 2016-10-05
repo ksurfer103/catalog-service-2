@@ -7,7 +7,9 @@ import com.healthesystems.catalog.repository.CatalogRepository;
 
 import com.jayway.jsonpath.JsonPath;
 import com.jayway.jsonpath.internal.filter.ValueNode;
+import org.junit.Rule;
 import org.junit.Test;
+import org.junit.rules.ExpectedException;
 import org.junit.runner.RunWith;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
@@ -43,6 +45,9 @@ public class ModelTests {
     private CatalogRepository catalogRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(ModelTests.class);
+
+    @Rule
+    public ExpectedException thrown = ExpectedException.none();
 
 
 
@@ -110,5 +115,25 @@ public class ModelTests {
         assertThat(vend).isEqualTo( "Acme Medical Supply");
 
     }
+
+
+    @Test
+    public void testPriceIsGreaterThanZero() {
+
+        this.thrown.expect(IllegalArgumentException.class);
+        this.thrown.expectMessage("Price must be greater than $0");
+        new ProductPrice(null, BigDecimal.valueOf(0.00),new Date(), PriceLocale.CA,"Acme Medical Supply","***********");
+
+    }
+
+    @Test
+    public void testPriceIsNotNull() {
+
+        this.thrown.expect(IllegalArgumentException.class);
+        this.thrown.expectMessage("Price can not be null");
+        new ProductPrice(null, null,new Date(), PriceLocale.CA,"Acme Medical Supply","***********");
+
+    }
+
 
 }
