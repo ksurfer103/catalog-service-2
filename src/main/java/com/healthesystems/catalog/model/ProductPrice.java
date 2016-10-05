@@ -91,13 +91,15 @@ public class ProductPrice {
 	public void setEffectiveDate(Date effectiveDate) {
 		this.effectiveDate = effectiveDate;
 	}
+
 	public PriceLocale getPriceLocale() {
 		return priceLocale;
 	}
 	public void setPriceLocale(PriceLocale priceLocale) {
 		this.priceLocale = priceLocale;
 	}
-    public String getVendor() {
+
+	public String getVendor() {
         return vendor;
     }
 
