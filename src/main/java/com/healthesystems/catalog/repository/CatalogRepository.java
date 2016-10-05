@@ -1,5 +1,6 @@
 package com.healthesystems.catalog.repository;
 
+import com.healthesystems.catalog.model.PriceLocale;
 import com.healthesystems.catalog.model.Product;
 import org.springframework.data.repository.CrudRepository;
 import org.springframework.stereotype.Repository;
@@ -15,6 +16,8 @@ public interface CatalogRepository extends
      List<Product> findByHcpc(String hcpc);
 
      Product findBySku(String sku);
+
+     Product findByProductSkuProductPricesByVendor(String sku, String vendor);
 }
 
 

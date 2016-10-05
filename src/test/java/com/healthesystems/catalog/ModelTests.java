@@ -5,7 +5,6 @@ import com.healthesystems.catalog.model.Product;
 import com.healthesystems.catalog.model.ProductPrice;
 import com.healthesystems.catalog.repository.CatalogRepository;
 
-import org.junit.Ignore;
 import org.junit.Test;
 import org.junit.runner.RunWith;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
@@ -19,7 +18,6 @@ import org.springframework.beans.factory.annotation.Autowired;
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
-import java.util.List;
 import java.util.Set;
 
 /**
@@ -65,8 +63,9 @@ public class ModelTests {
         catalogRepository.save(p);
 
         // get product
-        Product savedProduct = catalogRepository.findBySku("1234999");
+        Product savedProduct = catalogRepository.findByProductSkuProductPricesByVendor("1234999","**********");
         assertThat(savedProduct).isEqualTo(p);
+        //search by sku, pricelocale=xx, vendor=*'s,customer liberty
 
     }
 
