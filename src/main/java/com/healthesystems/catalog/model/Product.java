@@ -45,7 +45,7 @@ public class Product {
         setProductPrices(productPrices);
     }
 
-
+    // TODO Catalog Reference Key
     private String catalogReferenceKey;
 
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
