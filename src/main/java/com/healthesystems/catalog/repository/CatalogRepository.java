@@ -17,7 +17,9 @@ public interface CatalogRepository extends
 
      Product findBySku(String sku);
 
-     Product findByProductSkuProductPricesByVendor(String sku, String vendor);
+     Product findBySkuAndProductPricesVendorAndProductPricesCustomer(String sku,  String vendor, String customer);
+
+
 }
 
 

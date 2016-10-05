@@ -7,6 +7,9 @@ import com.fasterxml.jackson.annotation.JsonIdentityInfo;
 import com.fasterxml.jackson.annotation.JsonIgnoreProperties;
 import com.fasterxml.jackson.annotation.JsonProperty;
 import com.fasterxml.jackson.annotation.ObjectIdGenerators;
+import com.fasterxml.jackson.databind.ObjectMapper;
+import com.fasterxml.jackson.databind.ObjectWriter;
+import com.fasterxml.jackson.databind.SerializationFeature;
 
 import java.util.HashSet;
 import java.util.Set;
@@ -129,6 +132,18 @@ public class Product {
 		return "Product [productId=" + id + ", hcpc=" + hcpc + ", sku=" + sku + ", productName=" + productName
 				+ "]";
 	}
+
+	public String toJSON()  {
+        try {
+            ObjectMapper mapper = new ObjectMapper();
+            mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
+            ObjectWriter ow = mapper.writer().withDefaultPrettyPrinter();
+            return ow.writeValueAsString(this);
+        }
+        catch (Exception e) {
+            return "JSON Parse Error";
+        }
+    }
 
     
 }

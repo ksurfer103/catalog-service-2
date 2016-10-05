@@ -5,19 +5,27 @@ import com.healthesystems.catalog.model.Product;
 import com.healthesystems.catalog.model.ProductPrice;
 import com.healthesystems.catalog.repository.CatalogRepository;
 
+import com.jayway.jsonpath.JsonPath;
+import com.jayway.jsonpath.internal.filter.ValueNode;
 import org.junit.Test;
 import org.junit.runner.RunWith;
+import org.slf4j.Logger;
+import org.slf4j.LoggerFactory;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
 import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
+import static org.hamcrest.Matchers.hasSize;
+import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.jsonPath;
+
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
 import java.util.Date;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 /**
@@ -35,25 +43,12 @@ public class ModelTests {
     @Autowired
     private CatalogRepository catalogRepository;
 
-    // Model Test
-    @Test
-    public void saveShouldPersistData() throws Exception {
-        //Product product = this.entityManager.persistFlushFind(new Product("1234", "9876","bigwheels"));
-        //assertThat(product.getProductName()).isEqualTo("bigwheels");
-        //assertThat(product.getSku()).isEqualTo("1234");
-    }
+    private static final Logger logger = LoggerFactory.getLogger(ModelTests.class);
 
-    //Repository Test
-    @Test
-    public void findByUsernameShouldReturnUser() throws Exception {
-      //  this.entityManager.persist(new Product("1234", "9876","wheelchair"));
-        //Product product = this.catalogRepository.findByProductNameLike("wheelchair").get(0);
-        //assertThat(product.getSku()).isEqualTo("1234");
-       // assertThat(product.getHcpc()).isEqualTo("9876");
-    }
+
 
     @Test
-    public void testCustomerPricing() {
+    public void testCustomerPricingXX() {
 
         // Product price
         Set<ProductPrice> prices = new HashSet<ProductPrice>() ;
@@ -63,9 +58,57 @@ public class ModelTests {
         catalogRepository.save(p);
 
         // get product
-        Product savedProduct = catalogRepository.findByProductSkuProductPricesByVendor("1234999","**********");
+        Product savedProduct = catalogRepository.findBySkuAndProductPricesVendorAndProductPricesCustomer("1234999","***********","LIBERTY");
+        logger.info("savedProduct: {}",savedProduct.getProductPrices());
+        System.out.println("saved prod: " + savedProduct.toJSON());
         assertThat(savedProduct).isEqualTo(p);
-        //search by sku, pricelocale=xx, vendor=*'s,customer liberty
+        assertThat(savedProduct.getProductPrices().size()).isEqualTo(1);
+        // parse some JSON
+        String jsonString = savedProduct.toJSON();
+        String jsonExp = "$.productPrices";
+        List<Object> pps = JsonPath.read(jsonString, jsonExp);
+        System.out.println("what we get : " + pps.get(0));
+        // first record
+        String cust = JsonPath.read(pps.get(0), "$.customer");
+        assertThat(cust).isEqualTo("LIBERTY");
+        // check locale
+        String locale = JsonPath.read(pps.get(0), "$.priceLocale");
+        assertThat(locale).isEqualTo(  "XX" );
+        // check vendor
+        String vend = JsonPath.read(pps.get(0), "$.vendor");
+        assertThat(vend).isEqualTo( "***********");
+
+    }
+
+    @Test
+    public void testVendorPricingCA() {
+
+        // Product price
+        Set<ProductPrice> prices = new HashSet<ProductPrice>() ;
+        prices.add(new ProductPrice(null, BigDecimal.valueOf(100.00),new Date(), PriceLocale.CA,"Acme Medical Supply","***********"));
+        Product p = new Product("1234999","9876","bandaid",prices);
+
+        catalogRepository.save(p);
+
+        // get product
+        Product savedProduct = catalogRepository.findBySkuAndProductPricesVendorAndProductPricesCustomer("1234999","Acme Medical Supply","***********");
+        logger.info("savedProduct: {}",savedProduct.getProductPrices());
+        assertThat(savedProduct).isEqualTo(p);
+        assertThat(savedProduct.getProductPrices().size()).isEqualTo(1);
+        // parse some JSON
+        String jsonString = savedProduct.toJSON();
+        String jsonExp = "$.productPrices";
+        List<Object> pps = JsonPath.read(jsonString, jsonExp);
+        System.out.println("what we get : " + pps.get(0));
+        // first record
+        String cust = JsonPath.read(pps.get(0), "$.customer");
+        assertThat(cust).isEqualTo("***********");
+        // check locale
+        String locale = JsonPath.read(pps.get(0), "$.priceLocale");
+        assertThat(locale).isEqualTo(  "CA" );
+        // check vendor
+        String vend = JsonPath.read(pps.get(0), "$.vendor");
+        assertThat(vend).isEqualTo( "Acme Medical Supply");
 
     }
 
