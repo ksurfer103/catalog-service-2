@@ -34,7 +34,6 @@ import java.util.Set;
 @RunWith(SpringRunner.class)
 @DataJpaTest
 @ActiveProfiles("local")
-//@Ignore
 public class ModelTests {
 
     @Autowired

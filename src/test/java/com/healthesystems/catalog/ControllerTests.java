@@ -66,7 +66,7 @@ public class ControllerTests {
     @Before
     public void initSet() {
         prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date(), PriceLocale.XX,"ACME","LIBERTY"));
-        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date(), PriceLocale.XX,"ACME","LIBERTY"));
+        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date(), PriceLocale.XX,"ACME","**********"));
     }
 
 
@@ -98,8 +98,11 @@ public class ControllerTests {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].sku", is("1234")))
-               .andExpect(jsonPath("$[0].productName", is("bigwheels")))
-               .andReturn();
+                .andExpect(jsonPath("$[0].productName", is("bigwheels")))
+                // tests the children
+                .andExpect(jsonPath("$[0].productPrices[0].priceLocale", is("XX")))
+                // tests second chile which confusingly is first in the array
+                .andExpect(jsonPath("$[0].productPrices[0].customer", is("**********"))).andReturn();
 
         logger.info("results: {}", result.getResponse().getContentAsString());
     }
@@ -116,7 +119,8 @@ public class ControllerTests {
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$", hasSize(2)))
                 .andExpect(jsonPath("$[0].sku", is("1234")))
-                .andExpect(jsonPath("$[0].productName", is("bigwheels"))).andReturn();
+                // tests children
+                .andExpect(jsonPath("$[0].productPrices[0].vendor", is("ACME"))).andReturn();
 
         logger.info("results: {} ", result.getResponse().getContentAsString());
     }
