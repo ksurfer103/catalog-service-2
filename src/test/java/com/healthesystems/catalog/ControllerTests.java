@@ -102,7 +102,9 @@ public class ControllerTests {
                 // tests the children
                 .andExpect(jsonPath("$[0].productPrices[0].priceLocale", is("XX")))
                 // tests second chile which confusingly is first in the array
-                .andExpect(jsonPath("$[0].productPrices[0].customer", is("**********"))).andReturn();
+                .andExpect(jsonPath("$[0].productPrices[0].customer", is("**********")))
+                .andExpect(jsonPath("$[0].productPrices[1].customer", is("LIBERTY")))
+                .andReturn();
 
         logger.info("results: {}", result.getResponse().getContentAsString());
     }
