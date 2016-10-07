@@ -56,11 +56,9 @@ public class ProductPrice {
 			PriceLocale priceLocale, String vendor, String customer) {
 		super();
 		this.id = id;
-		Assert.notNull(price, "Price can not be null");
-		Assert.isTrue(price.doubleValue() > 0.00, "Price must be greater than $0");
-		this.price = price;
-		this.vendor = vendor;
-        this.customer = customer;
+		this.setPrice(price);
+		this.setVendor(vendor);
+        this.setCustomer(customer);
 		this.effectiveDate = effectiveDate;
 		this.priceLocale = priceLocale;
 	}
@@ -110,14 +108,18 @@ public class ProductPrice {
     }
 
     public void setVendor(String vendor) {
+        Assert.notNull(vendor, "Vendor can not be null, it can be xxxxxxxxxxx");
         this.vendor = vendor;
     }
 
     public String getCustomer() {
+
         return customer;
     }
 
-    public void setCustomer(String customer) {
+    public void setCustomer(String customer)
+    {
+        Assert.notNull(customer, "Customer can not be null, it can be xxxxxxxxxxx");
         this.customer = customer;
     }
 

@@ -58,7 +58,7 @@ public class ServiceTests {
     @Test
     public void testServiceLocal(){
     	Product product = catalogService.getProductBySku("5");
-    	logger.info("Product:   {}", product.toString());
+    	logger.info("Product:   {}", product.toJSON());
     	Assert.assertEquals("WSD", product.getHcpc());
     	
     }
@@ -76,7 +76,7 @@ public class ServiceTests {
     @Test
     public void testServiceBySku() {
         Product p = catalogService.getProductBySku("1234");
-        logger.info("Product: {}", p.toString());
+        logger.info("Product: {}", p.toJSON());
         assertThat(p.getProductName()).isEqualTo("special wheelchair");
     }
 

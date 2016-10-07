@@ -71,7 +71,7 @@ public class ModelTests {
         String jsonString = savedProduct.toJSON();
         String jsonExp = "$.productPrices";
         List<Object> pps = JsonPath.read(jsonString, jsonExp);
-        System.out.println("what we get : " + pps.get(0));
+        logger.info("what we get : {}", pps.get(0));
         // first record
         String cust = JsonPath.read(pps.get(0), "$.customer");
         assertThat(cust).isEqualTo("LIBERTY");
@@ -103,7 +103,7 @@ public class ModelTests {
         String jsonString = savedProduct.toJSON();
         String jsonExp = "$.productPrices";
         List<Object> pps = JsonPath.read(jsonString, jsonExp);
-        System.out.println("what we get : " + pps.get(0));
+        logger.info("what we get : {}", pps.get(0));
         // first record
         String cust = JsonPath.read(pps.get(0), "$.customer");
         assertThat(cust).isEqualTo("***********");
@@ -134,6 +134,25 @@ public class ModelTests {
         new ProductPrice(null, null,new Date(), PriceLocale.CA,"Acme Medical Supply","***********");
 
     }
+
+    @Test
+    public void testVendorIsNotNull() {
+
+        this.thrown.expect(IllegalArgumentException.class);
+        this.thrown.expectMessage("Vendor can not be null, it can be xxxxxxxxxxx");
+        new ProductPrice(null, BigDecimal.valueOf(99.00),new Date(), PriceLocale.CA,null,"***********");
+
+    }
+
+    @Test
+    public void testCustomerIsNotNull() {
+
+        this.thrown.expect(IllegalArgumentException.class);
+        this.thrown.expectMessage("Customer can not be null, it can be xxxxxxxxxxx");
+        new ProductPrice(null, BigDecimal.valueOf(99.00),new Date(), PriceLocale.CA,"Acme Explosives and Novelties",null);
+
+    }
+
 
 
 }
