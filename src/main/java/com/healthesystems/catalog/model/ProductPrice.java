@@ -59,7 +59,7 @@ public class ProductPrice {
 		this.setPrice(price);
 		this.setVendor(vendor);
         this.setCustomer(customer);
-		this.effectiveDate = effectiveDate;
+		this.setEffectiveDate(effectiveDate);
 		this.priceLocale = priceLocale;
 	}
 
@@ -93,7 +93,8 @@ public class ProductPrice {
 		return effectiveDate;
 	}
 	public void setEffectiveDate(Date effectiveDate) {
-		this.effectiveDate = effectiveDate;
+	    Assert.notNull(effectiveDate,"Effective date cannot be null");
+        this.effectiveDate = effectiveDate;
 	}
 
 	public PriceLocale getPriceLocale() {
