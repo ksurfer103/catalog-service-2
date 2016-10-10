@@ -146,7 +146,6 @@ public class ModelTests {
 
     @Test
     public void testCustomerIsNotNull() {
-
         this.thrown.expect(IllegalArgumentException.class);
         this.thrown.expectMessage("Customer can not be null, it can be xxxxxxxxxxx");
         new ProductPrice(null, BigDecimal.valueOf(99.00),new Date(), PriceLocale.CA,"Acme Explosives and Novelties",null);
