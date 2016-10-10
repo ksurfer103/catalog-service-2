@@ -153,6 +153,11 @@ public class ModelTests {
 
     }
 
-
+    @Test
+    public void testLocaleIsNotNull() {
+        this.thrown.expect(IllegalArgumentException.class);
+        this.thrown.expectMessage("Price Locale can not be null, it can be XX");
+        new ProductPrice(null, BigDecimal.valueOf(99.00),new Date(), null,"Acme Explosives and Novelties","xxxxxxxxxx");
+    }
 
 }
