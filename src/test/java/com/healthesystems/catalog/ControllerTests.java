@@ -65,8 +65,8 @@ public class ControllerTests {
 
     @Before
     public void initSet() {
-        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date(), PriceLocale.XX,"ACME","LIBERTY"));
-        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date(), PriceLocale.XX,"ACME","**********"));
+        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date("10/07/2016 00:00:00"), PriceLocale.XX,"ACME","LIBERTY"));
+        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date("10/07/2016 00:00:00"), PriceLocale.XX,"ACME","**********"));
     }
 
 
@@ -78,7 +78,11 @@ public class ControllerTests {
 
 
         MvcResult result = this.mvc.perform(get("/products/sku").param("sku","1234").accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk()).andExpect(content().json("{\"hcpc\":\"9876\",\"sku\":\"1234\",\"productName\":\"bigwheels\"}"))
+                .andExpect(status().isOk()).andExpect(content().json("{\"hcpc\":\"9876\",\"sku\":\"1234\",\"productName\":\"bigwheels\"," +
+                        "\"catalogReferenceKey\":\"9876-1234\",\"productPrices\":[{\"id\":null," +
+                        "\"priceLocale\":\"XX\",\"price\":1000.0,\"effectiveDate\":1475812800000,\"customer\":\"**********\"," +
+                        "\"vendor\":\"ACME\"},{\"id\":null,\"priceLocale\":\"XX\",\"price\":1000.0,\"effectiveDate\":1475812800000," +
+                        "\"customer\":\"LIBERTY\",\"vendor\":\"ACME\"}]}"))
                 .andReturn();
 
         logger.info("results: {}",result.getResponse().getContentAsString());
@@ -146,7 +150,5 @@ public class ControllerTests {
                 .andExpect(status().isAccepted());
         
      }
-
-
 
 }
