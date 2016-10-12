@@ -34,8 +34,8 @@ public class CatalogServiceImpl implements CatalogService {
 
     @Override
 
-    public List<Product> getProductByHcpc(String hcpc) {
-        return  catalogRepository.findByHcpc(hcpc);
+    public List<Product> getProductByHcpcProcedureCode(String hcpc) {
+        return  catalogRepository.findByHcpcProcedureCode(hcpc);
     }
 
     @Override

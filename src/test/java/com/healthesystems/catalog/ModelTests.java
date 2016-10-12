@@ -1,12 +1,10 @@
 package com.healthesystems.catalog;
 
-import com.healthesystems.catalog.model.PriceLocale;
-import com.healthesystems.catalog.model.Product;
-import com.healthesystems.catalog.model.ProductPrice;
+import com.healthesystems.catalog.model.*;
 import com.healthesystems.catalog.repository.CatalogRepository;
 
 import com.jayway.jsonpath.JsonPath;
-import com.jayway.jsonpath.internal.filter.ValueNode;
+import org.junit.Before;
 import org.junit.Rule;
 import org.junit.Test;
 import org.junit.rules.ExpectedException;
@@ -49,7 +47,11 @@ public class ModelTests {
     @Rule
     public ExpectedException thrown = ExpectedException.none();
 
-
+    ProductCategory category;
+    @Before
+    public void init() {
+        category = new ProductCategory("SERVICE", "Transportation service");
+    }
 
     @Test
     public void testCustomerPricingXX() {
@@ -57,7 +59,7 @@ public class ModelTests {
         // Product price
         Set<ProductPrice> prices = new HashSet<ProductPrice>() ;
         prices.add(new ProductPrice(null, BigDecimal.valueOf(10.00),new Date(), PriceLocale.XX,"***********","LIBERTY"));
-        Product p = new Product("1234999","9876","bandaid",prices);
+        Product p = new Product("1234999","9876","bandaid",prices,category, HcpcDiscriminator.HCPC);
 
         catalogRepository.save(p);
 
@@ -90,7 +92,7 @@ public class ModelTests {
         // Product price
         Set<ProductPrice> prices = new HashSet<ProductPrice>() ;
         prices.add(new ProductPrice(null, BigDecimal.valueOf(100.00),new Date(), PriceLocale.CA,"Acme Medical Supply","***********"));
-        Product p = new Product("1234999","9876","bandaid",prices);
+        Product p = new Product("1234999","9876","bandaid",prices, category, HcpcDiscriminator.HCPC);
 
         catalogRepository.save(p);
 
@@ -128,20 +130,16 @@ public class ModelTests {
 
     @Test
     public void testPriceIsNotNull() {
-
         this.thrown.expect(IllegalArgumentException.class);
         this.thrown.expectMessage("Price can not be null");
         new ProductPrice(null, null,new Date(), PriceLocale.CA,"Acme Medical Supply","***********");
-
     }
 
     @Test
     public void testVendorIsNotNull() {
-
         this.thrown.expect(IllegalArgumentException.class);
         this.thrown.expectMessage("Vendor can not be null, it can be xxxxxxxxxxx");
         new ProductPrice(null, BigDecimal.valueOf(99.00),new Date(), PriceLocale.CA,null,"***********");
-
     }
 
     @Test
@@ -149,7 +147,6 @@ public class ModelTests {
         this.thrown.expect(IllegalArgumentException.class);
         this.thrown.expectMessage("Customer can not be null, it can be xxxxxxxxxxx");
         new ProductPrice(null, BigDecimal.valueOf(99.00),new Date(), PriceLocale.CA,"Acme Explosives and Novelties",null);
-
     }
 
     @Test

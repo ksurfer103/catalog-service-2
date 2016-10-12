@@ -32,7 +32,7 @@ public class CatalogController {
     @RequestMapping(path="/products/hcpc",method= RequestMethod.GET)
     public List<Product> getProductByHcpc(@RequestParam("hcpc") String hcpc) {
         logger.info("get product by HCPC: {}", hcpc);
-        return catalogService.getProductByHcpc(hcpc);
+        return catalogService.getProductByHcpcProcedureCode(hcpc);
     }
 
     @RequestMapping( method = RequestMethod.POST)

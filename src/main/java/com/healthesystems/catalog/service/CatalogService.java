@@ -12,7 +12,7 @@ public interface CatalogService {
 
     boolean isItemExist(Product product);
     List<Product> getProductByName(String productName);
-    List<Product> getProductByHcpc(String hcpc);
+    List<Product> getProductByHcpcProcedureCode(String hcpc);
     Product getProductBySku(String sku);
     Product save(Product product);
 

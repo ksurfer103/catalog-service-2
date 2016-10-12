@@ -1,31 +1,20 @@
 package com.healthesystems.catalog;
 
-import com.healthesystems.catalog.model.PriceLocale;
-import com.healthesystems.catalog.model.Product;
-import com.healthesystems.catalog.model.ProductPrice;
-import com.healthesystems.catalog.model.ProductPriceType;
+import com.healthesystems.catalog.model.*;
 import com.healthesystems.catalog.repository.CatalogRepository;
 import com.healthesystems.catalog.service.CatalogService;
-import com.healthesystems.catalog.service.CatalogServiceImpl;
 
 import org.junit.Assert;
-import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
-import org.mockito.Mock;
 import org.slf4j.Logger;
 import org.slf4j.LoggerFactory;
 import org.springframework.beans.factory.annotation.Autowired;
-import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.boot.test.autoconfigure.orm.jpa.TestEntityManager;
 import org.springframework.boot.test.context.SpringBootTest;
-import org.springframework.context.annotation.ComponentScan;
 import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
-import java.util.ArrayList;
-import java.util.Arrays;
 import java.util.Date;
 import java.util.HashSet;
 import java.util.List;
@@ -57,10 +46,10 @@ public class ServiceTests {
 
     @Test
     public void testServiceLocal(){
-    	Product product = catalogService.getProductBySku("5");
+    	Product product = catalogService.getProductBySku("1234");
 
         logger.info("Product: {}", product.toJSON());
-        Assert.assertEquals("WSD", product.getHcpc());
+        Assert.assertEquals("9876", product.getHcpcProcedureCode());
     	
     }
     @Test
@@ -89,11 +78,11 @@ public class ServiceTests {
 
     @Test
     public void testCreateNewProduct(){
-    	
+        ProductCategory category = new ProductCategory("SERVICE", "Transport");
     	Set<ProductPrice> prices = new HashSet<ProductPrice>();
     	prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date(), PriceLocale.XX,"ACME","LIBERTY"));
     	prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date(), PriceLocale.XX,"ACME","LIBERTY"));
-    	Product newProduct = new Product("123456789","123456789","Super-duber special wheelchair", prices);
+    	Product newProduct = new Product("123456789","123456789","Super-duber special wheelchair", prices, category, HcpcDiscriminator.CPT);
     	
     	catalogService.save(newProduct);
     	Product savedProduct = catalogService.getProductBySku(newProduct.getSku());

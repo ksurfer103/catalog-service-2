@@ -12,10 +12,12 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 
 import java.math.BigDecimal;
 import java.nio.charset.Charset;
+import java.text.SimpleDateFormat;
+import java.time.Instant;
+import java.time.temporal.ChronoUnit;
 import java.util.*;
 
-import com.healthesystems.catalog.model.PriceLocale;
-import com.healthesystems.catalog.model.ProductPriceType;
+import com.healthesystems.catalog.model.*;
 import org.junit.Before;
 import org.junit.Test;
 import org.junit.runner.RunWith;
@@ -36,8 +38,6 @@ import org.springframework.test.web.servlet.MvcResult;
 import com.fasterxml.jackson.databind.ObjectMapper;
 import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
-import com.healthesystems.catalog.model.Product;
-import com.healthesystems.catalog.model.ProductPrice;
 import com.healthesystems.catalog.service.CatalogService;
 
 @RunWith(SpringRunner.class)	
@@ -62,11 +62,13 @@ public class ControllerTests {
     private static final Logger logger = LoggerFactory.getLogger(ControllerTests.class);
 
     Set<ProductPrice> prices =  new HashSet<ProductPrice>();
+    ProductCategory category = new ProductCategory();
 
     @Before
     public void initSet() {
-        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date("10/07/2016 00:00:00"), PriceLocale.XX,"ACME","LIBERTY"));
-        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date("10/07/2016 00:00:00"), PriceLocale.XX,"ACME","**********"));
+        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),this.getTruncatedDate(), PriceLocale.XX,"ACME","LIBERTY"));
+        prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),this.getTruncatedDate(), PriceLocale.XX,"ACME","**********"));
+        category = new ProductCategory("DEVICES", "Wheelchair");
     }
 
 
@@ -74,27 +76,42 @@ public class ControllerTests {
 	public void testRestEndpointSku() throws Exception {
 
         given(this.catalogService.getProductBySku("1234"))
-                .willReturn(new Product("1234", "9876","bigwheels", prices));
+                .willReturn(new Product("1234", "9876","bigwheels", prices,category, HcpcDiscriminator.HCPC));
 
 
         MvcResult result = this.mvc.perform(get("/products/sku").param("sku","1234").accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk()).andExpect(content().json("{\"hcpc\":\"9876\",\"sku\":\"1234\",\"productName\":\"bigwheels\"," +
+                .andExpect(status().isOk()).andExpect(content().json("{\"hcpcProcedureCode\":\"9876\",\"sku\":\"1234\",\"productName\":\"bigwheels\"," +
                         "\"catalogReferenceKey\":\"9876-1234\",\"productPrices\":[{\"id\":null," +
-                        "\"priceLocale\":\"XX\",\"price\":1000.0,\"effectiveDate\":1475812800000,\"customer\":\"**********\"," +
-                        "\"vendor\":\"ACME\"},{\"id\":null,\"priceLocale\":\"XX\",\"price\":1000.0,\"effectiveDate\":1475812800000," +
+                        "\"priceLocale\":\"XX\",\"price\":1000.0,\"effectiveDate\":1311811200000,\"customer\":\"**********\"," +
+                        "\"vendor\":\"ACME\"},{\"id\":null,\"priceLocale\":\"XX\",\"price\":1000.0,\"effectiveDate\":1311811200000," +
                         "\"customer\":\"LIBERTY\",\"vendor\":\"ACME\"}]}"))
                 .andReturn();
 
         logger.info("results: {}",result.getResponse().getContentAsString());
 	}
+
+	Date getTruncatedDate()  {
+        String inputDate = "07/28/2011";
+        try {
+            Date date = new SimpleDateFormat("MM/dd/yyyy").parse(inputDate);
+            Instant instant = date.toInstant();
+            instant = instant.truncatedTo(ChronoUnit.DAYS);
+            return Date.from(instant);
+        }
+
+        catch (Exception e) {
+            return new Date();
+        }
+
+    }
     
   
     @Test
     public void testRestEndpointHcpc() throws Exception {
         List<Product> products = Arrays.asList(
-                new Product("1234", "9876","bigwheels",prices),
-                new Product("1234", "9876","bigwheels",prices));
-        when(catalogService.getProductByHcpc("9876")).thenReturn(products);
+                new Product("1234", "9876","bigwheels",prices,category, HcpcDiscriminator.HCPC),
+                new Product("1234", "9876","bigwheels",prices,category, HcpcDiscriminator.HCPC));
+        when(catalogService.getProductByHcpcProcedureCode("9876")).thenReturn(products);
 
         MvcResult result = mvc.perform(get("/products/hcpc").param("hcpc","9876").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
@@ -115,8 +132,8 @@ public class ControllerTests {
     @Test
     public void testRestEndpointProductName() throws Exception {
         List<Product> products = Arrays.asList(
-                new Product("1234", "9876","bigwheels",prices),
-                new Product("1234", "9876","bigwheels",prices));
+                new Product("1234", "9876","bigwheels",prices, category, HcpcDiscriminator.HCPC),
+                new Product("1234", "9876","bigwheels",prices,category, HcpcDiscriminator.HCPC));
         when(catalogService.getProductByName("bigwheels")).thenReturn(products);
 
         MvcResult result = mvc.perform(get("/products/productname").param("productName","bigwheels").accept(MediaType.APPLICATION_JSON_UTF8))
@@ -138,7 +155,7 @@ public class ControllerTests {
     @Test
     public void testInsertProduct() throws Exception {
         String url = "products" ;
-        Product anObject = new Product("testSku","testHcpc","testProduct",prices);
+        Product anObject = new Product("testSku","testHcpc","testProduct",prices,category, HcpcDiscriminator.HCPC);;
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
