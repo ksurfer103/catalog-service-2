@@ -8,7 +8,9 @@ import com.fasterxml.jackson.databind.ObjectWriter;
 import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.util.Assert;
 
+import java.util.ArrayList;
 import java.util.HashSet;
+import java.util.List;
 import java.util.Set;
 
 import javax.persistence.*;
@@ -17,6 +19,8 @@ import javax.validation.constraints.NotNull;
 
 @Entity
 public class Product {
+
+    public static final String DEFAULT_DISCRIMINATOR = "MISC";
 
 
     @Id
@@ -27,25 +31,26 @@ public class Product {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name="hcpc_discriminator")
-    private HcpcDiscriminator hcpcDiscriminator;
+    @Column(name="discriminator")
+    private Discriminator discriminator;
 
-    private String hcpcProcedureCode;
+    private String procedureCode;
 
     private String sku;
     private String productName;
 
+
     //TODO: add Unit of Measure (look at existing system)
 
-    //TODO: ADD CATEGORY, What is the category used for.
 
-    public Product(String sku, String hcpcProcedureCode, String productName, Set<ProductPrice> productPrices, ProductCategory category, HcpcDiscriminator hcpcDiscriminator) {
-        this.hcpcProcedureCode = hcpcProcedureCode;
+
+    public Product(String sku, String procedureCode, String productName, List<ProductPrice> productPrices, ProductCategory category, Discriminator discriminator) {
+        this.setProcedureCode(procedureCode);
         this.productName = productName;
         this.sku = sku;
         this.setProductPrices(productPrices);
         this.setCategory(category);
-        this.setHcpcDiscriminator(hcpcDiscriminator);
+        this.setDiscriminator(discriminator);
     }
 
     // TODO Catalog Reference Key
@@ -54,7 +59,7 @@ public class Product {
     @OneToMany(fetch = FetchType.EAGER, cascade=CascadeType.ALL)
     @JoinColumn(name="product_id")
     @JsonIgnoreProperties("product")
-    private Set<ProductPrice> productPrices = new HashSet<ProductPrice>();
+    private List<ProductPrice> productPrices = new ArrayList<ProductPrice>();
 
     public ProductCategory getCategory() {
         return category;
@@ -72,12 +77,13 @@ public class Product {
     public Product() { }
 
 
-    public String getHcpcProcedureCode() {
-        return hcpcProcedureCode;
+    public String getProcedureCode() {
+        return procedureCode;
     }
 
-    public void setHcpcProcedureCode(String hcpcProcedureCode) {
-        this.hcpcProcedureCode = hcpcProcedureCode;
+    public void setProcedureCode(String procedureCodeParam) {
+        Assert.notNull(procedureCodeParam, "Procedure code cannot be null");
+        this.procedureCode = procedureCodeParam;
     }
 
     public String getSku() {
@@ -97,11 +103,11 @@ public class Product {
     }
 
 
-    public Set<ProductPrice> getProductPrices() {
+    public List<ProductPrice> getProductPrices() {
 		return productPrices;
 	}
 
-	public void setProductPrices(Set<ProductPrice> productPrices) {
+	public void setProductPrices(List<ProductPrice> productPrices) {
 	    for (ProductPrice productPrice : productPrices) {
 	    	addProductPrice(productPrice);
 		}
@@ -112,14 +118,19 @@ public class Product {
 		productPrice.setProduct(this);
 	}
 
-    public HcpcDiscriminator getHcpcDiscriminator() {
-        return hcpcDiscriminator;
+    public Discriminator getDiscriminator() {
+        return discriminator;
     }
 
-    public void setHcpcDiscriminator(HcpcDiscriminator hcpcDiscriminator) {
-        Assert.notNull(hcpcDiscriminator,"Must either be HCPC or CPT");
-//TODO assert on a enum is equal        Assert.isTrue(hcpc)
-        this.hcpcDiscriminator = hcpcDiscriminator;
+    public void setDiscriminator(Discriminator discriminator) {
+
+        if (discriminator==null){ discriminator=Discriminator.MISC;}
+        this.discriminator = discriminator;
+    }
+
+
+    public String getCatalogReferenceKey() {
+        return procedureCode + "-" + sku;
     }
 
     @Override
@@ -130,22 +141,29 @@ public class Product {
         Product product = (Product) o;
 
         if (id != null ? !id.equals(product.id) : product.id != null) return false;
-        if (!hcpcProcedureCode.equals(product.hcpcProcedureCode)) return false;
-        if (!sku.equals(product.sku)) return false;
-        return productName.equals(product.productName);
+        if (discriminator != product.discriminator) return false;
+        if (procedureCode != null ? !procedureCode.equals(product.procedureCode) : product.procedureCode != null)
+            return false;
+        if (sku != null ? !sku.equals(product.sku) : product.sku != null) return false;
+        if (productName != null ? !productName.equals(product.productName) : product.productName != null) return false;
+        if (catalogReferenceKey != null ? !catalogReferenceKey.equals(product.catalogReferenceKey) : product.catalogReferenceKey != null)
+            return false;
+        if (productPrices != null ? !productPrices.equals(product.productPrices) : product.productPrices != null)
+            return false;
+        return category != null ? category.equals(product.category) : product.category == null;
 
-    }
-
-    public String getCatalogReferenceKey() {
-        return hcpcProcedureCode + "-" + sku;
     }
 
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + hcpcProcedureCode.hashCode();
-        result = 31 * result + sku.hashCode();
-        result = 31 * result + productName.hashCode();
+        result = 31 * result + (discriminator != null ? discriminator.hashCode() : 0);
+        result = 31 * result + (procedureCode != null ? procedureCode.hashCode() : 0);
+        result = 31 * result + (sku != null ? sku.hashCode() : 0);
+        result = 31 * result + (productName != null ? productName.hashCode() : 0);
+        result = 31 * result + (catalogReferenceKey != null ? catalogReferenceKey.hashCode() : 0);
+        result = 31 * result + (productPrices != null ? productPrices.hashCode() : 0);
+        result = 31 * result + (category != null ? category.hashCode() : 0);
         return result;
     }
 
@@ -153,7 +171,8 @@ public class Product {
     public String toString() {
         return "Product{" +
                 "id=" + id +
-                ", hcpcProcedureCode='" + hcpcProcedureCode + '\'' +
+                ", discriminator=" + discriminator +
+                ", procedureCode='" + procedureCode + '\'' +
                 ", sku='" + sku + '\'' +
                 ", productName='" + productName + '\'' +
                 ", catalogReferenceKey='" + catalogReferenceKey + '\'' +
@@ -174,5 +193,4 @@ public class Product {
         }
     }
 
-    
 }

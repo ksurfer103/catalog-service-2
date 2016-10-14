@@ -14,7 +14,7 @@ public interface CatalogRepository extends
      List<Product> findByProductNameLike(String productName);
 
 
-     List<Product> findByHcpcProcedureCode(String hcpc);
+     List<Product> findByProcedureCode(String hcpc);
 
      Product findBySku(String sku);
 

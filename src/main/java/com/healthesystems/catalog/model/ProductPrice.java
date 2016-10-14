@@ -23,6 +23,8 @@ public class ProductPrice {
 
 
     private static final long MIN_PRODUCT_PRICE = 1;
+    public static final String DEFAULT_VENDOR = "XXXXXXXXXX";
+    public static final String DEFAULT_CUSTOMER = "XXXXXXXXXX";
 
 
     @Id
@@ -101,8 +103,9 @@ public class ProductPrice {
 	public PriceLocale getPriceLocale() {
 		return priceLocale;
 	}
+
 	public void setPriceLocale(PriceLocale priceLocale) {
-        Assert.notNull(priceLocale,"Price Locale can not be null, it can be XX");
+        if (priceLocale==null){priceLocale=PriceLocale.XX;}
         this.priceLocale = priceLocale;
 	}
 
@@ -111,7 +114,7 @@ public class ProductPrice {
     }
 
     public void setVendor(String vendor) {
-        Assert.notNull(vendor, "Vendor can not be null, it can be xxxxxxxxxxx");
+        if (vendor==null){vendor=DEFAULT_VENDOR;};
         this.vendor = vendor;
     }
 
@@ -122,7 +125,7 @@ public class ProductPrice {
 
     public void setCustomer(String customer)
     {
-        Assert.notNull(customer, "Customer can not be null, it can be xxxxxxxxxxx");
+        if (customer==null){customer=DEFAULT_CUSTOMER;};
         this.customer = customer;
     }
 

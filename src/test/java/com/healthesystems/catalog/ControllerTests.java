@@ -61,7 +61,7 @@ public class ControllerTests {
 
     private static final Logger logger = LoggerFactory.getLogger(ControllerTests.class);
 
-    Set<ProductPrice> prices =  new HashSet<ProductPrice>();
+    List<ProductPrice> prices =  new ArrayList<ProductPrice>();
     ProductCategory category = new ProductCategory();
 
     @Before
@@ -76,11 +76,11 @@ public class ControllerTests {
 	public void testRestEndpointSku() throws Exception {
 
         given(this.catalogService.getProductBySku("1234"))
-                .willReturn(new Product("1234", "9876","bigwheels", prices,category, HcpcDiscriminator.HCPC));
+                .willReturn(new Product("1234", "9876","bigwheels", prices,category, Discriminator.HCPC));
 
 
         MvcResult result = this.mvc.perform(get("/products/sku").param("sku","1234").accept(MediaType.APPLICATION_JSON_UTF8))
-                .andExpect(status().isOk()).andExpect(content().json("{\"hcpcProcedureCode\":\"9876\",\"sku\":\"1234\",\"productName\":\"bigwheels\"," +
+                .andExpect(status().isOk()).andExpect(content().json("{\"procedureCode\":\"9876\",\"sku\":\"1234\",\"productName\":\"bigwheels\"," +
                         "\"catalogReferenceKey\":\"9876-1234\",\"productPrices\":[{\"id\":null," +
                         "\"priceLocale\":\"XX\",\"price\":1000.0,\"effectiveDate\":1311811200000,\"customer\":\"**********\"," +
                         "\"vendor\":\"ACME\"},{\"id\":null,\"priceLocale\":\"XX\",\"price\":1000.0,\"effectiveDate\":1311811200000," +
@@ -109,9 +109,9 @@ public class ControllerTests {
     @Test
     public void testRestEndpointHcpc() throws Exception {
         List<Product> products = Arrays.asList(
-                new Product("1234", "9876","bigwheels",prices,category, HcpcDiscriminator.HCPC),
-                new Product("1234", "9876","bigwheels",prices,category, HcpcDiscriminator.HCPC));
-        when(catalogService.getProductByHcpcProcedureCode("9876")).thenReturn(products);
+                new Product("1234", "9876","bigwheels",prices,category, Discriminator.HCPC),
+                new Product("1234", "9876","bigwheels",prices,category, Discriminator.HCPC));
+        when(catalogService.getProductByProcedureCode("9876")).thenReturn(products);
 
         MvcResult result = mvc.perform(get("/products/hcpc").param("hcpc","9876").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
@@ -122,8 +122,8 @@ public class ControllerTests {
                 // tests the children
                 .andExpect(jsonPath("$[0].productPrices[0].priceLocale", is("XX")))
                 // tests second chile which confusingly is first in the array
-                .andExpect(jsonPath("$[0].productPrices[0].customer", is("**********")))
-                .andExpect(jsonPath("$[0].productPrices[1].customer", is("LIBERTY")))
+                .andExpect(jsonPath("$[0].productPrices[1].customer", is("**********")))
+                .andExpect(jsonPath("$[0].productPrices[0].customer", is("LIBERTY")))
                 .andReturn();
 
         logger.info("results: {}", result.getResponse().getContentAsString());
@@ -132,8 +132,8 @@ public class ControllerTests {
     @Test
     public void testRestEndpointProductName() throws Exception {
         List<Product> products = Arrays.asList(
-                new Product("1234", "9876","bigwheels",prices, category, HcpcDiscriminator.HCPC),
-                new Product("1234", "9876","bigwheels",prices,category, HcpcDiscriminator.HCPC));
+                new Product("1234", "9876","bigwheels",prices, category, Discriminator.HCPC),
+                new Product("1234", "9876","bigwheels",prices,category, Discriminator.HCPC));
         when(catalogService.getProductByName("bigwheels")).thenReturn(products);
 
         MvcResult result = mvc.perform(get("/products/productname").param("productName","bigwheels").accept(MediaType.APPLICATION_JSON_UTF8))
@@ -155,7 +155,7 @@ public class ControllerTests {
     @Test
     public void testInsertProduct() throws Exception {
         String url = "products" ;
-        Product anObject = new Product("testSku","testHcpc","testProduct",prices,category, HcpcDiscriminator.HCPC);;
+        Product anObject = new Product("testSku","testHcpc","testProduct",prices,category, Discriminator.HCPC);;
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);

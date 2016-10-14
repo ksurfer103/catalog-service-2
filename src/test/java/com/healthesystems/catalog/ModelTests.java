@@ -23,10 +23,7 @@ import static org.springframework.test.web.servlet.result.MockMvcResultMatchers.
 import org.springframework.beans.factory.annotation.Autowired;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 /**
  * Created by apurdon on 9/27/16.
@@ -43,6 +40,7 @@ public class ModelTests {
     private CatalogRepository catalogRepository;
 
     private static final Logger logger = LoggerFactory.getLogger(ModelTests.class);
+    List<ProductPrice> prices = new ArrayList<>() ;
 
     @Rule
     public ExpectedException thrown = ExpectedException.none();
@@ -57,16 +55,16 @@ public class ModelTests {
     public void testCustomerPricingXX() {
 
         // Product price
-        Set<ProductPrice> prices = new HashSet<ProductPrice>() ;
+
         prices.add(new ProductPrice(null, BigDecimal.valueOf(10.00),new Date(), PriceLocale.XX,"***********","LIBERTY"));
-        Product p = new Product("1234999","9876","bandaid",prices,category, HcpcDiscriminator.HCPC);
+        Product p = new Product("1234999","9876","bandaid",prices, category, Discriminator.HCPC);
 
         catalogRepository.save(p);
 
         // get product
         Product savedProduct = catalogRepository.findBySkuAndProductPricesVendorAndProductPricesCustomer("1234999","***********","LIBERTY");
         logger.info("savedProduct: {}",savedProduct.getProductPrices());
-        System.out.println("saved prod: " + savedProduct.toJSON());
+
         assertThat(savedProduct).isEqualTo(p);
         assertThat(savedProduct.getProductPrices().size()).isEqualTo(1);
         // parse some JSON
@@ -90,9 +88,9 @@ public class ModelTests {
     public void testVendorPricingCA() {
 
         // Product price
-        Set<ProductPrice> prices = new HashSet<ProductPrice>() ;
+
         prices.add(new ProductPrice(null, BigDecimal.valueOf(100.00),new Date(), PriceLocale.CA,"Acme Medical Supply","***********"));
-        Product p = new Product("1234999","9876","bandaid",prices, category, HcpcDiscriminator.HCPC);
+        Product p = new Product("1234999","9876","bandaid",prices, category, Discriminator.HCPC);
 
         catalogRepository.save(p);
 
@@ -137,23 +135,74 @@ public class ModelTests {
 
     @Test
     public void testVendorIsNotNull() {
-        this.thrown.expect(IllegalArgumentException.class);
-        this.thrown.expectMessage("Vendor can not be null, it can be xxxxxxxxxxx");
-        new ProductPrice(null, BigDecimal.valueOf(99.00),new Date(), PriceLocale.CA,null,"***********");
+        // Product price
+
+        prices.add(new ProductPrice(null, BigDecimal.valueOf(10.00),new Date(), PriceLocale.XX,null,"ACME"));
+        Product p = new Product("1234999","9876","bandaid",prices, category, Discriminator.HCPC);
+
+        catalogRepository.save(p);
+
+        // get product
+        Product savedProduct = catalogRepository.findBySku("1234999");
+        logger.info("savedProduct: {}",savedProduct.toJSON());
+
+        // parse some JSON
+        String jsonString = savedProduct.toJSON();
+        String jsonExp = "$.productPrices";
+        List<Object> pps = JsonPath.read(jsonString, jsonExp);
+        logger.info("what we get : {}", pps.get(0));
+        // first record test that the null vendor code has been transformed to X
+        String vend = JsonPath.read(pps.get(0), "$.vendor");
+        assertThat(vend).isEqualTo("XXXXXXXXXX");
+
     }
 
     @Test
     public void testCustomerIsNotNull() {
-        this.thrown.expect(IllegalArgumentException.class);
-        this.thrown.expectMessage("Customer can not be null, it can be xxxxxxxxxxx");
-        new ProductPrice(null, BigDecimal.valueOf(99.00),new Date(), PriceLocale.CA,"Acme Explosives and Novelties",null);
+        // Product price
+
+        prices.add(new ProductPrice(null, BigDecimal.valueOf(10.00),new Date(), PriceLocale.XX,"***********",null));
+        Product p = new Product("1234999","9876","bandaid",prices, category, Discriminator.HCPC);
+
+        catalogRepository.save(p);
+
+        // get product
+        Product savedProduct = catalogRepository.findBySku("1234999");
+        logger.info("savedProduct: {}",savedProduct.toJSON());
+
+           // parse some JSON
+        String jsonString = savedProduct.toJSON();
+        String jsonExp = "$.productPrices";
+        List<Object> pps = JsonPath.read(jsonString, jsonExp);
+        logger.info("what we get : {}", pps.get(0));
+        // first record test that the null customer code has been transformed to X
+        String cust = JsonPath.read(pps.get(0), "$.customer");
+        assertThat(cust).isEqualTo("XXXXXXXXXX");
+
     }
+
 
     @Test
     public void testLocaleIsNotNull() {
-        this.thrown.expect(IllegalArgumentException.class);
-        this.thrown.expectMessage("Price Locale can not be null, it can be XX");
-        new ProductPrice(null, BigDecimal.valueOf(99.00),new Date(), null,"Acme Explosives and Novelties","xxxxxxxxxx");
+        // Product price
+
+        prices.add(new ProductPrice(null, BigDecimal.valueOf(10.00),new Date(), null,"***********",null));
+        Product p = new Product("1234999","9876","bandaid",prices, category, Discriminator.HCPC);
+
+        catalogRepository.save(p);
+
+        // get product
+        Product savedProduct = catalogRepository.findBySku("1234999");
+        logger.info("savedProduct: {}",savedProduct.toJSON());
+
+        // parse some JSON
+        String jsonString = savedProduct.toJSON();
+        String jsonExp = "$.productPrices";
+        List<Object> pps = JsonPath.read(jsonString, jsonExp);
+        logger.info("what we get : {}", pps.get(0));
+        // first record test that the null customer code has been transformed to X
+        String priceLocale = JsonPath.read(pps.get(0), "$.priceLocale");
+        assertThat(priceLocale).isEqualTo("XX");
     }
 
 }

@@ -15,10 +15,7 @@ import org.springframework.test.context.ActiveProfiles;
 import org.springframework.test.context.junit4.SpringRunner;
 
 import java.math.BigDecimal;
-import java.util.Date;
-import java.util.HashSet;
-import java.util.List;
-import java.util.Set;
+import java.util.*;
 
 import static org.assertj.core.api.Java6Assertions.assertThat;
 
@@ -49,7 +46,7 @@ public class ServiceTests {
     	Product product = catalogService.getProductBySku("1234");
 
         logger.info("Product: {}", product.toJSON());
-        Assert.assertEquals("9876", product.getHcpcProcedureCode());
+        Assert.assertEquals("9876", product.getProcedureCode());
     	
     }
     @Test
@@ -79,10 +76,10 @@ public class ServiceTests {
     @Test
     public void testCreateNewProduct(){
         ProductCategory category = new ProductCategory("SERVICE", "Transport");
-    	Set<ProductPrice> prices = new HashSet<ProductPrice>();
+    	List<ProductPrice> prices = new ArrayList<ProductPrice>();
     	prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date(), PriceLocale.XX,"ACME","LIBERTY"));
     	prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date(), PriceLocale.XX,"ACME","LIBERTY"));
-    	Product newProduct = new Product("123456789","123456789","Super-duber special wheelchair", prices, category, HcpcDiscriminator.CPT);
+    	Product newProduct = new Product("123456789","123456789","Super-duber special wheelchair", prices, category, Discriminator.CPT);
     	
     	catalogService.save(newProduct);
     	Product savedProduct = catalogService.getProductBySku(newProduct.getSku());
