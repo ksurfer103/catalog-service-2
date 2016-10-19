@@ -29,8 +29,8 @@ public class CatalogController {
         return catalogService.getProductByName(productName);
     }
 
-    @RequestMapping(path="/products/hcpc",method= RequestMethod.GET)
-    public List<Product> getProductByHcpc(@RequestParam("hcpc") String hcpc) {
+    @RequestMapping(path="/products/procedure-code",method= RequestMethod.GET)
+    public List<Product> getProductByHcpc(@RequestParam("procedure-code") String hcpc) {
         logger.info("get product by HCPC: {}", hcpc);
         return catalogService.getProductByProcedureCode(hcpc);
     }
