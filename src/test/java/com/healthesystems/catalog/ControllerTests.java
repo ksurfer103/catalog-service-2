@@ -113,7 +113,7 @@ public class ControllerTests {
                 new Product("1234", "9876","bigwheels",prices,category, Discriminator.HCPC));
         when(catalogService.getProductByProcedureCode("9876")).thenReturn(products);
 
-        MvcResult result = mvc.perform(get("/products/hcpc").param("hcpc","9876").accept(MediaType.APPLICATION_JSON_UTF8))
+        MvcResult result = mvc.perform(get("/products/procedure-code").param("procedure-code","9876").accept(MediaType.APPLICATION_JSON_UTF8))
                 .andExpect(status().isOk())
                 .andExpect(content().contentType(MediaType.APPLICATION_JSON_UTF8_VALUE))
                 .andExpect(jsonPath("$", hasSize(2)))
