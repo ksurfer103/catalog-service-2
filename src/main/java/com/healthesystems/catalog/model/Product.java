@@ -9,9 +9,7 @@ import com.fasterxml.jackson.databind.SerializationFeature;
 import org.springframework.util.Assert;
 
 import java.util.ArrayList;
-import java.util.HashSet;
 import java.util.List;
-import java.util.Set;
 
 import javax.persistence.*;
 import javax.validation.constraints.NotNull;
@@ -31,8 +29,8 @@ public class Product {
 
     @NotNull
     @Enumerated(EnumType.STRING)
-    @Column(name="discriminator")
-    private Discriminator discriminator;
+    @Column(name="productDiscriminator")
+    private ProductDiscriminator productDiscriminator;
 
     private String procedureCode;
 
@@ -44,13 +42,13 @@ public class Product {
 
 
 
-    public Product(String sku, String procedureCode, String productName, List<ProductPrice> productPrices, ProductCategory category, Discriminator discriminator) {
+    public Product(String sku, String procedureCode, String productName, List<ProductPrice> productPrices, ProductCategory category, ProductDiscriminator productDiscriminator) {
         this.setProcedureCode(procedureCode);
         this.productName = productName;
         this.sku = sku;
         this.setProductPrices(productPrices);
         this.setCategory(category);
-        this.setDiscriminator(discriminator);
+        this.setProductDiscriminator(productDiscriminator);
     }
 
     // TODO Catalog Reference Key
@@ -118,14 +116,14 @@ public class Product {
 		productPrice.setProduct(this);
 	}
 
-    public Discriminator getDiscriminator() {
-        return discriminator;
+    public ProductDiscriminator getProductDiscriminator() {
+        return productDiscriminator;
     }
 
-    public void setDiscriminator(Discriminator discriminator) {
+    public void setProductDiscriminator(ProductDiscriminator productDiscriminator) {
 
-        if (discriminator==null){ discriminator=Discriminator.MISC;}
-        this.discriminator = discriminator;
+        if (productDiscriminator ==null){ productDiscriminator = ProductDiscriminator.MISC;}
+        this.productDiscriminator = productDiscriminator;
     }
 
 
@@ -141,7 +139,7 @@ public class Product {
         Product product = (Product) o;
 
         if (id != null ? !id.equals(product.id) : product.id != null) return false;
-        if (discriminator != product.discriminator) return false;
+        if (productDiscriminator != product.productDiscriminator) return false;
         if (procedureCode != null ? !procedureCode.equals(product.procedureCode) : product.procedureCode != null)
             return false;
         if (sku != null ? !sku.equals(product.sku) : product.sku != null) return false;
@@ -157,7 +155,7 @@ public class Product {
     @Override
     public int hashCode() {
         int result = id != null ? id.hashCode() : 0;
-        result = 31 * result + (discriminator != null ? discriminator.hashCode() : 0);
+        result = 31 * result + (productDiscriminator != null ? productDiscriminator.hashCode() : 0);
         result = 31 * result + (procedureCode != null ? procedureCode.hashCode() : 0);
         result = 31 * result + (sku != null ? sku.hashCode() : 0);
         result = 31 * result + (productName != null ? productName.hashCode() : 0);
@@ -171,7 +169,7 @@ public class Product {
     public String toString() {
         return "Product{" +
                 "id=" + id +
-                ", discriminator=" + discriminator +
+                ", productDiscriminator=" + productDiscriminator +
                 ", procedureCode='" + procedureCode + '\'' +
                 ", sku='" + sku + '\'' +
                 ", productName='" + productName + '\'' +

@@ -57,7 +57,7 @@ public class ModelTests {
         // Product price
 
         prices.add(new ProductPrice(null, BigDecimal.valueOf(10.00),new Date(), PriceLocale.XX,"***********","LIBERTY"));
-        Product p = new Product("1234999","9876","bandaid",prices, category, Discriminator.HCPC);
+        Product p = new Product("1234999","9876","bandaid",prices, category, ProductDiscriminator.HCPC);
 
         catalogRepository.save(p);
 
@@ -90,7 +90,7 @@ public class ModelTests {
         // Product price
 
         prices.add(new ProductPrice(null, BigDecimal.valueOf(100.00),new Date(), PriceLocale.CA,"Acme Medical Supply","***********"));
-        Product p = new Product("1234999","9876","bandaid",prices, category, Discriminator.HCPC);
+        Product p = new Product("1234999","9876","bandaid",prices, category, ProductDiscriminator.HCPC);
 
         catalogRepository.save(p);
 
@@ -138,7 +138,7 @@ public class ModelTests {
         // Product price
 
         prices.add(new ProductPrice(null, BigDecimal.valueOf(10.00),new Date(), PriceLocale.XX,null,"ACME"));
-        Product p = new Product("1234999","9876","bandaid",prices, category, Discriminator.HCPC);
+        Product p = new Product("1234999","9876","bandaid",prices, category, ProductDiscriminator.HCPC);
 
         catalogRepository.save(p);
 
@@ -162,7 +162,7 @@ public class ModelTests {
         // Product price
 
         prices.add(new ProductPrice(null, BigDecimal.valueOf(10.00),new Date(), PriceLocale.XX,"***********",null));
-        Product p = new Product("1234999","9876","bandaid",prices, category, Discriminator.HCPC);
+        Product p = new Product("1234999","9876","bandaid",prices, category, ProductDiscriminator.HCPC);
 
         catalogRepository.save(p);
 
@@ -187,7 +187,7 @@ public class ModelTests {
         // Product price
 
         prices.add(new ProductPrice(null, BigDecimal.valueOf(10.00),new Date(), null,"***********",null));
-        Product p = new Product("1234999","9876","bandaid",prices, category, Discriminator.HCPC);
+        Product p = new Product("1234999","9876","bandaid",prices, category, ProductDiscriminator.HCPC);
 
         catalogRepository.save(p);
 

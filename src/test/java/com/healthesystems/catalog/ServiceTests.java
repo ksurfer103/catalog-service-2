@@ -79,7 +79,7 @@ public class ServiceTests {
     	List<ProductPrice> prices = new ArrayList<ProductPrice>();
     	prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date(), PriceLocale.XX,"ACME","LIBERTY"));
     	prices.add(new ProductPrice(null,BigDecimal.valueOf(1000.00),new Date(), PriceLocale.XX,"ACME","LIBERTY"));
-    	Product newProduct = new Product("123456789","123456789","Super-duber special wheelchair", prices, category, Discriminator.CPT);
+    	Product newProduct = new Product("123456789","123456789","Super-duber special wheelchair", prices, category, ProductDiscriminator.CPT);
     	
     	catalogService.save(newProduct);
     	Product savedProduct = catalogService.getProductBySku(newProduct.getSku());

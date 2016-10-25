@@ -76,7 +76,7 @@ public class ControllerTests {
 	public void testRestEndpointSku() throws Exception {
 
         given(this.catalogService.getProductBySku("1234"))
-                .willReturn(new Product("1234", "9876","bigwheels", prices,category, Discriminator.HCPC));
+                .willReturn(new Product("1234", "9876","bigwheels", prices,category, ProductDiscriminator.HCPC));
 
 
         MvcResult result = this.mvc.perform(get("/products/sku").param("sku","1234").accept(MediaType.APPLICATION_JSON_UTF8))
@@ -109,8 +109,8 @@ public class ControllerTests {
     @Test
     public void testRestEndpointHcpc() throws Exception {
         List<Product> products = Arrays.asList(
-                new Product("1234", "9876","bigwheels",prices,category, Discriminator.HCPC),
-                new Product("1234", "9876","bigwheels",prices,category, Discriminator.HCPC));
+                new Product("1234", "9876","bigwheels",prices,category, ProductDiscriminator.HCPC),
+                new Product("1234", "9876","bigwheels",prices,category, ProductDiscriminator.HCPC));
         when(catalogService.getProductByProcedureCode("9876")).thenReturn(products);
 
         MvcResult result = mvc.perform(get("/products/procedure-code").param("procedure-code","9876").accept(MediaType.APPLICATION_JSON_UTF8))
@@ -132,8 +132,8 @@ public class ControllerTests {
     @Test
     public void testRestEndpointProductName() throws Exception {
         List<Product> products = Arrays.asList(
-                new Product("1234", "9876","bigwheels",prices, category, Discriminator.HCPC),
-                new Product("1234", "9876","bigwheels",prices,category, Discriminator.HCPC));
+                new Product("1234", "9876","bigwheels",prices, category, ProductDiscriminator.HCPC),
+                new Product("1234", "9876","bigwheels",prices,category, ProductDiscriminator.HCPC));
         when(catalogService.getProductByName("bigwheels")).thenReturn(products);
 
         MvcResult result = mvc.perform(get("/products/productname").param("productName","bigwheels").accept(MediaType.APPLICATION_JSON_UTF8))
@@ -155,7 +155,7 @@ public class ControllerTests {
     @Test
     public void testInsertProduct() throws Exception {
         String url = "products" ;
-        Product anObject = new Product("testSku","testHcpc","testProduct",prices,category, Discriminator.HCPC);;
+        Product anObject = new Product("testSku","testHcpc","testProduct",prices,category, ProductDiscriminator.HCPC);;
 
         ObjectMapper mapper = new ObjectMapper();
         mapper.configure(SerializationFeature.WRAP_ROOT_VALUE, false);
